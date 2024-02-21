@@ -1,5 +1,5 @@
 # NOVELLA
-<code> Repositorio para la asignatura PD1 </code>
+<code> PD1 </code>
 
 ### 1. Descripción del proyecto
 
