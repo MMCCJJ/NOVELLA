@@ -1,2 +1,5 @@
-
 LIBRERÍAS REQUERIDAS PARA NUESTRO PROYECTO:
+datetime
+pytrends
+time
+re
