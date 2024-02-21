@@ -25,7 +25,8 @@ def getInterestOverTime(keywords, categoria, tf):
     
     pytrends.build_payload(keywords, cat=categoria, timeframe=tf) 
     data = pytrends.interest_over_time() 
-    data = data.reset_index() 
+    data = data.reset_index()
+    
     return data
 
 def getTrends(df_bestsellers):
@@ -73,3 +74,5 @@ def getTrends(df_bestsellers):
 
     df_bestsellers["BookInterest1M"] = interestBooks
     df_bestsellers["AuthorInterest1Y"] = interestAuthors
+
+    return df_bestsellers
