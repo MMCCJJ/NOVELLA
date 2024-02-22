@@ -3,3 +3,7 @@ datetime
 pytrends
 time
 re
+selenium
+requests
+PIL
+io
