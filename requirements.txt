@@ -1,9 +1,22 @@
 LIBRERÍAS REQUERIDAS PARA NUESTRO PROYECTO:
-datetime
-pytrends
-time
-re
-selenium
+--web scraping--
 requests
+selenium
+bs4 (BeautifulSoup)
+
+--presencia de color--
 PIL
 io
+
+--fechas--
+datetime
+time
+
+--google trends--
+pytrends
+
+--otras--
+pandas
+re
+
+
