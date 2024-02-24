@@ -95,7 +95,7 @@ def getSagaNumber(soup_libro):
     else:
         return "NaN"
     
-def getNumAwards(url_libro):
+def getNumAwards(url_libro, year):
     """Devuelve el número de premios literarios que ha ganado un libro antes de ser bestseller"""
     
     # Inicializar el navegador (tener el driver correspondiente, como ChromeDriver)
