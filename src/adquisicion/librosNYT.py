@@ -48,7 +48,7 @@ def minusWeek(day, month, year):
     new_date = date - timedelta(weeks=1)
     return new_date.day, new_date.month, new_date.year
 
-def getBooksNYT(day = YEAR_INI, month = MONTH_INI, year = DAY_INI, wb = WEEKS_BACK):
+def getBooksNYT(day = DAY_INI, month = MONTH_INI, year = YEAR_INI, wb = WEEKS_BACK):
     """Accede a la lista NYT a partir de la fecha dada hasta wb semanas atrás y devuelve 
     un dataframe con información acerca de estos libros"""
 
