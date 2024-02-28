@@ -5,22 +5,36 @@ from bs4 import BeautifulSoup
 
 import librosNYT
 import goodreads
+import barnesAndNoble
+import googleTrends
 
 def main():
 
     # Obtenemos un dataframe con los bestsellers del NYT
-    df_bestsellers = librosNYT.getBooksNYT()
-    df_bestsellers.to_csv('librosNYT.csv')
+    df_nyt = librosNYT.getBooksNYT()
+    df_nyt.to_csv('librosNYT.csv')
 
     # Creamos un dataframe con la información adicional de cada libro
-    df_info = df_bestsellers['Title'].apply(getInfoLibro).apply(pd.Series)
+    df_info = df_nyt['Title'].apply(getInfoLibro).apply(pd.Series)
 
     # Combinamos los dfs
-    df_bestsellers = pd.concat([df_bestsellers, df_info], axis=1)
+    df_bestsellers = pd.concat([df_nyt, df_info], axis=1)
 
-    df_bestsellers.to_csv('main.csv')
+    # Obtenemos el número de premios de cada libro
+    df_premios = df_bestsellers.apply(lambda row: goodreads.getNumAwards(row['url'], row['Date']), axis=1)
 
+    # Combinamos los dfs
+    df_bestsellers = pd.concat([df_bestsellers, df_premios], axis=1)
+    df_bestsellers.to_csv('bestsellers.csv')
 
+    # Obtenemos un dataframe con los precios
+    df_precios = df_bestsellers['Title'].apply(barnesAndNoble.getPrice).apply(pd.Series)
+
+    # Combinamos los dfs
+    df_bestsellers = pd.concat([df_bestsellers, df_precios], axis=1)
+
+    # Obtenemos la información de googleTrends
+    df_bestsellers = googleTrends.getTrends(df_bestsellers)
 
 def getInfoLibro(nombre_libro):
     """Devuelve un diccionario con información de un libro dado"""
@@ -75,10 +89,10 @@ def getInfoLibro(nombre_libro):
                     'DatePublished': goodreads.getDatePublished(soup_libro),
                     'SagaName': goodreads.getSagaName(soup_libro),
                     'SagaNumber': goodreads.getSagaNumber(soup_libro),
-                    #'NumAwards': goodreads.getNumAwards(url_libro), hacerlo a parte???
                     'RedPerc': porcentajesColores["porcentaje_rojo"],
                     'BluePerc': porcentajesColores["porcentaje_azul"],
-                    'GreenPerc': porcentajesColores["porcentaje_verde"]
+                    'GreenPerc': porcentajesColores["porcentaje_verde"],
+                    'url': url_libro
                 }
         
 if __name__ == "__main__":

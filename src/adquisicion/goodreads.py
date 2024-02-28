@@ -95,8 +95,8 @@ def getSagaNumber(soup_libro):
     else:
         return "NaN"
     
-def getNumAwards(url_libro, year):
-    """Devuelve el número de premios literarios que ha ganado un libro antes de ser bestseller"""
+def getNumAwards(url_libro, date):
+    """Devuelve un diccionario con el número de premios literarios que ha ganado un libro antes de ser bestseller"""
     
     # Inicializar el navegador (tener el driver correspondiente, como ChromeDriver)
     driver = webdriver.Chrome()
@@ -137,13 +137,14 @@ def getNumAwards(url_libro, year):
         award_year = int(award_text.split("(")[-1].split(")")[0])
         
         # Si el premio es anterior a la fecha en la que el libro fue bestseller, incrementamos el contador
+        year = date.year
         if award_year < year:
             num_premios += 1
     
     # Cerrar el navegador
     driver.quit()
     
-    return num_premios
+    return {'NumAwards': num_premios}
 
 def getColorPercentage(url):
     """Analiza la presencia de color en la portada de un libro"""
