@@ -3,6 +3,8 @@ LIBRERÍAS REQUERIDAS PARA NUESTRO PROYECTO:
 requests
 selenium
 bs4 (BeautifulSoup)
+asyncio
+playwright.async_api
 
 --presencia de color--
 PIL
@@ -18,5 +20,3 @@ pytrends
 --otras--
 pandas
 re
-
-
