@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 import re
 
 def getPrice(nombre_libro):
@@ -15,11 +16,26 @@ def getPrice(nombre_libro):
     driver = webdriver.Chrome()
     
     driver.get(url)
+
+    # Obtenemos el elemento con el precio si aparece
+    try:
+        price_element = driver.find_element(By.CLASS_NAME, 'product-shelf-pricing').text.strip()
+        price_elements = price_element.split()
+    except NoSuchElementException:
+        print("No se encontró el precio")
+        # Si no se encuentra devolvemos None
+        return {'Price': None, 'PriceFormat': None}
     
-    price_element = driver.find_element(By.CLASS_NAME, 'product-shelf-pricing').text.strip()
-    price_elements = price_element.split()
-    
+    # Obtenemos el formato
     price_format = price_elements[0]
-    price = float(price_elements[1].replace('$', ''))
+
+    # Obtenemos el precio si aparece (probamos con el segundo y tercer elemento)
+    try:
+        price = float(price_elements[1].replace('$', ''))
+    except ValueError:
+        try:
+            price = float(price_elements[2].replace('$', ''))
+        except IndexError:
+            price = None
         
-    return(price, price_format)
+    return {'Price': price, 'PriceFormat': price_format}

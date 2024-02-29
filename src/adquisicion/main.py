@@ -14,27 +14,27 @@ def main():
     df_nyt = librosNYT.getBooksNYT()
     df_nyt.to_csv('librosNYT.csv')
 
-    # Creamos un dataframe con la información adicional de cada libro
+    # Creamos un dataframe con la información de goodreads de cada libro
     df_info = df_nyt['Title'].apply(getInfoLibro).apply(pd.Series)
 
     # Combinamos los dfs
     df_bestsellers = pd.concat([df_nyt, df_info], axis=1)
 
     # Obtenemos el número de premios de cada libro
-    df_premios = df_bestsellers.apply(lambda row: goodreads.getNumAwards(row['url'], row['Date']), axis=1)
+    df_premios = pd.DataFrame(df_bestsellers.apply(lambda row: goodreads.getNumAwards(row['url'], row['Date']), axis=1).tolist())
 
     # Combinamos los dfs
     df_bestsellers = pd.concat([df_bestsellers, df_premios], axis=1)
     df_bestsellers.to_csv('bestsellers.csv')
 
     # Obtenemos un dataframe con los precios
-    df_precios = df_bestsellers['Title'].apply(barnesAndNoble.getPrice).apply(pd.Series)
+    df_precios = pd.DataFrame(df_bestsellers['Title'].apply(barnesAndNoble.getPrice).tolist())
 
     # Combinamos los dfs
     df_bestsellers = pd.concat([df_bestsellers, df_precios], axis=1)
 
     # Obtenemos la información de googleTrends
-    df_bestsellers = googleTrends.getTrends(df_bestsellers)
+    df_bestsellers = googleTrends.getTrends(df_bestsellers) # hay que cambiar la función getTrends
 
 def getInfoLibro(nombre_libro):
     """Devuelve un diccionario con información de un libro dado"""

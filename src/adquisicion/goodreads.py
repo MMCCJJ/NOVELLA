@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 
 def getRating(soup_libro):
     """Devuelve el rating actual del libro""" 
@@ -120,6 +121,13 @@ def getNumAwards(url_libro, date):
     # Encontramos el botón desplegable que contiene los premios y hacemos click en él
     button = driver.find_element(By.XPATH, "//button[@aria-label='Book details and editions']")
     button.click()
+
+    # Hacemos click en el botón "Show more" si aparece
+    try:
+        button = driver.find_element(By.XPATH, "//button[@aria-label='Show more Literary awards']")
+        button.click()
+    except NoSuchElementException:
+        print("El botón 'Show more Literary awards' no fue encontrado")
 
     # Obtenemos todos los premios
     awards = driver.find_elements(By.XPATH, "//span[@data-testid='award']")
