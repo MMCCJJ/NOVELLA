@@ -99,60 +99,69 @@ def getSagaNumber(soup_libro):
 def getNumAwards(url_libro, date):
     """Devuelve un diccionario con el número de premios literarios que ha ganado un libro antes de ser bestseller"""
     
-    # Inicializar el navegador (tener el driver correspondiente, como ChromeDriver)
-    driver = webdriver.Chrome()
-
-    # Abrir la página web
-    driver.get(url_libro)
-    
-    # Si aparece una pestaña de "Discover and Read More", la cerramos
-    puedeAparecerSpam = True
-    if puedeAparecerSpam:
-
-        try:
-            boton_close = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "Button--transparent"))
-            )
-            boton_close.click()
-            puedeAparecerSpam = False
-        except Exception as e:
-            print("No ha aparecido la pestaña 'Discover'")
-    
-    # Encontramos el botón desplegable que contiene los premios y hacemos click en él
-    button = driver.find_element(By.XPATH, "//button[@aria-label='Book details and editions']")
-    button.click()
-
-    # Hacemos click en el botón "Show more" si aparece
     try:
-        button = driver.find_element(By.XPATH, "//button[@aria-label='Show more Literary awards']")
+        # Inicializar el navegador (tener el driver correspondiente, como ChromeDriver)
+        driver = webdriver.Chrome()
+
+        # Abrir la página web
+        driver.get(url_libro)
+
+        # Si aparece una pestaña de "Discover and Read More", la cerramos
+        puedeAparecerSpam = True
+        if puedeAparecerSpam:
+
+            try:
+                boton_close = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, "Button--transparent"))
+                )
+                boton_close.click()
+                puedeAparecerSpam = False
+            except Exception as e:
+                print("No ha aparecido la pestaña 'Discover'")
+
+        # Encontramos el botón desplegable que contiene los premios y hacemos click en él
+        button = driver.find_element(By.XPATH, "//button[@aria-label='Book details and editions']")
+        
+        # Nos desplazamos hacia el elemento
+        actions = ActionChains(driver)
+        actions.move_to_element(button).perform()
+            
         button.click()
-    except NoSuchElementException:
-        print("El botón 'Show more Literary awards' no fue encontrado")
 
-    # Obtenemos todos los premios
-    awards = driver.find_elements(By.XPATH, "//span[@data-testid='award']")
+        # Hacemos click en el botón "Show more" si aparece
+        try:
+            button = driver.find_element(By.XPATH, "//button[@aria-label='Show more Literary awards']")
+            button.click()
+        except NoSuchElementException:
+            print("El botón 'Show more Literary awards' no fue encontrado")
 
-    # Inicializamos el contador
-    num_premios = 0
-    
-    # Para cada premio recibido
-    for award_element in awards:
+        # Obtenemos todos los premios
+        awards = driver.find_elements(By.XPATH, "//span[@data-testid='award']")
+
+        # Inicializamos el contador
+        num_premios = 0
+
+        # Para cada premio recibido
+        for award_element in awards:
+
+            # Obtenemos el texto
+            award_text = award_element.text
+          
+            # Extraemos el año del premio
+            award_year = int(award_text.split("(")[-1].split(")")[0])
         
-        # Obtenemos el texto
-        award_text = award_element.text
-        
-        # Extraemos el año del premio
-        award_year = int(award_text.split("(")[-1].split(")")[0])
-        
-        # Si el premio es anterior a la fecha en la que el libro fue bestseller, incrementamos el contador
-        year = date.year
-        if award_year < year:
-            num_premios += 1
-    
-    # Cerrar el navegador
-    driver.quit()
-    
-    return {'NumAwards': num_premios}
+            # Si el premio es anterior a la fecha en la que el libro fue bestseller, incrementamos el contador
+            year = date.year
+            if award_year < year:
+                num_premios += 1
+
+        # Cerrar el navegador
+        driver.quit()
+
+        return {'NumAwards': num_premios}
+    except Exception as e:
+        return {'NumAwards': 0}
+
 
 def getColorPercentage(url):
     """Analiza la presencia de color en la portada de un libro"""
