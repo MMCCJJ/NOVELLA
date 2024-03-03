@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.neighbors import NearestNeighbors
 
 # Columnas innecesarias que se eliminarán
 COLUMNAS_INNECESARIAS = ["Main Category", "url", "Subcategory", "Publisher"]
@@ -16,6 +17,8 @@ IMPUREZAS_AUTORES = [
             ', with recipes by',
             'as told to'
             ]
+
+FORMATOS_VALIDOS = ["hardcover", "paperback", "ebook"]
 
 def corregirTitulos(df):
     """Corrige los títulos (capitalizar y quitar espacios en blanco en los extremos)"""
@@ -81,5 +84,81 @@ def eliminarNulos(df):
     
     # Eliminar filas donde RedPerc es -1.0
     df = df[df['RedPerc'] != -1.0]
+    
+    return df
+
+def corregirType(df):
+    """Filtra y coge solo aquellas filas con un formato admitido"""
+    
+    # Reemplazar "kindle edition" por "ebook"
+    df["Type"] = df["Type"].replace("kindle edition", "ebook")
+    # Eliminar filas que no contienen tipos admitidos
+    df = df[df["Type"].isin(FORMATOS_VALIDOS)]
+    
+    return df
+    
+def corregirPriceFormat(df):
+    """Comprueba si PriceFormat coincide con Type o si es un formato admitido,
+    de lo contrario, la sustituye por el valor de Type y pone Price a nulo """
+    # 1- Transformar todos los nombres de la columna PriceFormat a minúsculas
+    df['PriceFormat'] = df['PriceFormat'].str.lower()
+    
+    # 2- Contrastar esa columna con la columna Type
+    for index, row in df.iterrows():
+        if row['PriceFormat'] != row['Type']:
+            # Si no coinciden y no es uno de los valores permitidos
+            if row['PriceFormat'] not in FORMATOS_VALIDOS:
+                # Reemplazar el valor de PriceFormat por el de la columna Type
+                df.at[index, 'PriceFormat'] = row['Type']
+                # El campo Price se pone a nulo
+                df.at[index, 'Price'] = None
+                
+    return df
+
+
+def imputarPrecios(df, vecinos = 5):
+    """Imputa los precios en la columna Price de los valores nulos"""
+    
+    # Convertimos PriceFormat en variables dummy
+    df = pd.get_dummies(df, columns=['PriceFormat'])
+    
+    # Filtramos nulos en la columna Price
+    df_nulos = df[df['Price'].isnull()]
+    
+    # Filtramos no nulos en la columna 'Price'
+    df_no_nulos = df.dropna(subset=['Price'])
+    
+    # Seleccionamos las características relevantes para el algoritmo KNN
+    X = df_no_nulos[['NumPages', 'Rating', 'PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook']]
+    y = df_no_nulos['Price']
+    
+    # Inicializamos el modelo KNN
+    knn = NearestNeighbors(n_neighbors=vecinos)
+    knn.fit(X, y)
+    
+    # Iteramos sobre los nulos para imputar
+    for index, row in df_nulos.iterrows():
+        
+        # Filtramos libros similares
+        libroSimilarIndices = knn.kneighbors(
+            
+            [[row['NumPages'], 
+              row['Rating'], 
+              row['PriceFormat_hardcover'], 
+              row['PriceFormat_paperback'], 
+              row['PriceFormat_ebook']]]
+        )[1][0]
+        
+        librosSimilares = df_no_nulos.iloc[libroSimilarIndices]
+        
+        # Calculamos la media de los precios de los libros similares
+        precioImputado = round(librosSimilares['Price'].mean(), 2)
+       
+        # Imputamos el precio
+        df.at[index, 'Price'] = precioImputado
+    
+    # Eliminamos el one-hot encoding
+    df['PriceFormat'] = df[['PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook']].idxmax(axis=1).str.replace('PriceFormat_', '')
+    df = df.drop(['PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook'], axis=1)
     
     return df
