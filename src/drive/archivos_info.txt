@@ -3,6 +3,6 @@
 1jD2o1R7Mq52P1fAsV06ybRPHvzKP7Sxa, libros_procesados_1.csv, ./data/raw
 1RqHRptVaRSkmVAsiyjdbFGRQy8lATGof, libros2.csv, ./data/raw
 1hYPSvk6XjSKzyp7J3JZp1EnDagNX_s77, libros1.csv, ./data/raw
-13FaSyunAoquRodQ35K3iTU7LongaQKKy, autores.csv, ./data/raw
+1iuOX167_t-e6wBtoffO8WQF0sC3vsy8X, autores.csv, ./data/raw
 
 
