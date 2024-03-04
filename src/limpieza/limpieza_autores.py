@@ -172,6 +172,9 @@ def limpiaAutores():
     # Eliminamos la columna 'StandardCountry'
     autores.drop(columns=['StandardCountry'], inplace=True)
 
+    # Por último eliminamo la columna NumChild ya que no es relevante
+    autores = autores.drop('NumChild', axis=1)
+
     # Reseteamos el índice
     autores = autores.reset_index(drop=True)
     autores.to_parquet('AUTORES_LIMPIOS.parquet')
