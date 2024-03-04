@@ -21,3 +21,5 @@ pytrends
 --otras--
 pandas
 re
+fuzzywuzzy
+os
