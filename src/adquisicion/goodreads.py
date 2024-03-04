@@ -1,6 +1,8 @@
 import requests
 from PIL import Image
 from io import BytesIO
+import re
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -203,4 +205,98 @@ def getColorPercentage(url):
         "porcentaje_rojo": porcentaje_rojo,
         "porcentaje_verde": porcentaje_verde,
         "porcentaje_azul": porcentaje_azul
+    }
+
+def getInfoLibro(nombre_libro):
+    """Devuelve un diccionario con información de un libro dado"""
+    
+    nombre_libro_formateado = re.sub(r"[!,*)@#%(&$_?.^'-]", '', nombre_libro).lower().replace(' ', '+')
+    
+    # Buscamos el nombre del libro en goodreads
+    url = "https://www.goodreads.com/search?q=" + nombre_libro_formateado
+    
+    try:
+        response = requests.get(url)
+        
+        # Si la request tiene éxito
+        if response.status_code == 200:
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+            # Seleccionamos la tabla del html con los resultados de la búsqueda
+            table = soup.select('.tableList')
+
+            if table:
+
+                # Seleccionamos el primer resultado
+                first_row = table[0].find('tr')
+
+                # Obtenemos el valor de 'href' que corresponde a la url de la página del libro
+                libro = first_row.find('a', class_='bookTitle')
+                href_libro = libro.get('href')
+
+                # Accedemos a la página del libro en goodreads
+                url_libro = "https://www.goodreads.com" + href_libro
+                print(url_libro)
+                response = requests.get(url_libro)
+
+                # Si la request tiene éxito
+                if response.status_code == 200:
+
+                    soup_libro = BeautifulSoup(response.text, "html.parser")
+
+                    try:
+                        
+                        # Obtenemos la presencia de color en la portada del libro
+                        img_tag = soup_libro.find('img', {'class': 'ResponsiveImage'})
+
+                        if img_tag:
+                            img_src = img_tag.get('src')
+                            
+                        porcentajesColores = getColorPercentage(img_src)
+                        
+                        return {
+                            'Rating': getRating(soup_libro),
+                            'NumPages': getNumPages(soup_libro),
+                            'GenresList': getGenresList(soup_libro),
+                            'Type': getType(soup_libro),
+                            'DatePublished': getDatePublished(soup_libro),
+                            'SagaName': getSagaName(soup_libro),
+                            'SagaNumber': getSagaNumber(soup_libro),
+                            'RedPerc': porcentajesColores["porcentaje_rojo"],
+                            'BluePerc': porcentajesColores["porcentaje_azul"],
+                            'GreenPerc': porcentajesColores["porcentaje_verde"],
+                            'url': url_libro
+                        }
+                    except Exception as e:
+                        print(f"Error: {e}")
+
+                        return {
+                            'Rating': None,
+                            'NumPages': None,
+                            'GenresList': None,
+                            'Type': None,
+                            'DatePublished': None,
+                            'SagaName': None,
+                            'SagaNumber': None,
+                            'RedPerc': None,
+                            'BluePerc': None,
+                            'GreenPerc': None,
+                            'url': None
+                        }
+    except Exception as e:
+        print(f"Error de conexión: {e}")
+
+    return {
+        'Rating': None,
+        'NumPages': None,
+        'GenresList': None,
+        'Type': None,
+        'DatePublished': None,
+        'SagaName': None,
+        'SagaNumber': None,
+        'RedPerc': None,
+        'BluePerc': None,
+        'GreenPerc': None,
+        'url': None
     }
