@@ -253,6 +253,7 @@ def getInfoAutor(nombre_autor):
 def generarDfAutores(df_libros):
     """Genera y devuelve un df con la información de los autores recopilada de Wikipedia a partir de los autores del df de libros de entrada"""
     df_autores = crearDfAutores(df_libros)
+    df_autores.to_csv('autores_url.csv')
 
     # Creamos un df con la info recopilada de GoodReads
     df_info = df_autores['FullName'].apply(getInfoAutor).apply(pd.Series)
