@@ -162,3 +162,73 @@ def imputarPrecios(df, vecinos = 5):
     df = df.drop(['PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook'], axis=1)
     
     return df
+
+def coincidenciasLevenshtein(df1, df2, umbralT = 2, umbralA = 2):
+    
+    coincidencias = []
+    
+    df1 = df1.copy()
+    df2 = df2.copy()
+    
+    df1["Title"] = df1["Title"].apply(lambda x: str(x).upper().strip())
+    df2["Title"] = df2["Title"].apply(lambda x: str(x).upper().strip())
+    
+    df1["Author"] = df1["Author"].apply(lambda x: x.split()[0])
+    df2["Author"] = df2["Author"].apply(lambda x: x.split()[0])
+    
+    cont = 0
+    for t1, a1 in zip(df1['Title'], df1['Author']):
+        for t2, a2 in zip(df2['Title'], df2['Author']):
+            
+            distanciaT = Levenshtein.distance(t1, t2)
+            distanciaA = Levenshtein.distance(a1, a2)
+            
+            if distanciaT <= umbralT and distanciaA <= umbralA:
+                coincidencias.append(t2)
+                cont += 1
+                
+    print(f"Hay {cont} coincidencias.")
+                
+    return list(set(coincidencias))
+
+def eliminarCoincidencias(dfBestsellers, dfLibros):
+    
+    titulosCoincidentes = coincidenciasLevenshtein(dfBestsellers, dfLibros)
+    filtro = dfLibros["Title"].apply(lambda x: str(x).upper() not in titulosCoincidentes) 
+    
+    return dfLibros[filtro].reset_index(drop = True)
+
+def crearColumnaPotencialBS(df, esPotencialBS = False):
+    df["potencialBS"] = int(esPotencialBS)
+    return df
+
+def agruparTitulosBestsellers(df):
+    
+    agrupados = df.groupby(['Title', 'Author', 'Publisher', 'Main Category']).agg(
+        {
+            'Description': 'first',
+            'Date': 'min', 
+            'Weeks on List': 'max',
+            'Subcategory': lambda x: x.tolist()
+        }
+    )
+    
+    agrupados["Subcategory"] = agrupados["Subcategory"].apply(lambda x: list(set(x)))
+    
+    agrupados = agrupados.sort_values(by = "Date").reset_index()
+    
+    return agrupados
+
+def eliminarDuplicados(dfLibros):
+    dfLibros = dfLibros.drop_duplicates(subset=['Title', 'Author'], keep='first')
+    return dfLibros
+
+def juntarLibros(dfBestsellers, dfLibros):
+    
+    return pd.concat(
+        [
+            crearColumnaPotencialBS(dfBestsellers, True),
+            crearColumnaPotencialBS(dfLibros, False)
+        ],
+        ignore_index = True
+    )
