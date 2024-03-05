@@ -245,6 +245,17 @@ def anyadirColumna(df1, df2, columna):
     
     return df
 
+def contieneFiccion(cadena):
+    lista = str(cadena).strip("[]").replace("'", "").split(", ")
+    return 'Fiction' in lista
+
+def soloFiccion(df):
+    
+    filtro1 = df["Main Category"] == "FICTION"
+    filtro2 = df["GenresList"].apply(contieneFiccion)
+    
+    return df[filtro1 | filtro2]
+
 def corregirWeeksOnList(df):   
     df["Weeks on List"].fillna(0, inplace=True)
     return df
