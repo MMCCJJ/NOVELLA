@@ -73,7 +73,7 @@ def getInfoGoodReads(dfLibros):
     return dfLibros
 
 def getPricesBN(dfLibros):
-    df_precios = pd.DataFrame(df['Title'].apply(barnesAndNoble.getPrice).tolist())
+    df_precios = pd.DataFrame(dfLibros['Title'].apply(barnesAndNoble.getPrice).tolist())
     dfLibros= pd.concat([dfLibros, df_precios], axis=1)
     return dfLibros
 
