@@ -175,6 +175,9 @@ def limpiaAutores():
 
     # Por último eliminamo la columna NumChild ya que no es relevante
     autores = autores.drop('NumChild', axis=1)
+    autores = autores.drop('Birthday', axis=1)
+    autores = autores.drop('Nationality', axis=1)
+    autores = autores.drop('Born', axis=1)
 
     # Reseteamos el índice
     autores = autores.reset_index(drop=True)
