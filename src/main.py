@@ -77,10 +77,6 @@ def getPricesBN(dfLibros):
     dfLibros= pd.concat([dfLibros, df_precios], axis=1)
     return dfLibros
 
-
-# Combinamos los dfs
-df = pd.concat([df, df_precios], axis=1)
-
 def getInfoGoodReadsPorPartes():
     """Obtiene la información de goodreads de los libros divididos en 2 partes para facilitar el procesamiento"""
 
