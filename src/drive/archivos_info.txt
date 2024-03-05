@@ -1,8 +1,8 @@
-13qTbgL-Q-hE25yHqMFK_6kdeu9lQwlQO, libros_procesados_2.csv, ./data/raw
-1jD2o1R7Mq52P1fAsV06ybRPHvzKP7Sxa, libros_procesados_1.csv, ./data/raw
-1RqHRptVaRSkmVAsiyjdbFGRQy8lATGof, libros2.csv, ./data/raw
 1hYPSvk6XjSKzyp7J3JZp1EnDagNX_s77, libros1.csv, ./data/raw
+1RqHRptVaRSkmVAsiyjdbFGRQy8lATGof, libros2.csv, ./data/raw
+1jD2o1R7Mq52P1fAsV06ybRPHvzKP7Sxa, libros_procesados_1.csv, ./data/raw
+13qTbgL-Q-hE25yHqMFK_6kdeu9lQwlQO, libros_procesados_2.csv, ./data/raw
 1iuOX167_t-e6wBtoffO8WQF0sC3vsy8X, autores.csv, ./data/raw
 1nel4vTMyKWGiNSyyUO4I5HBMJL9LfGir, autores_goodreads.csv, ./data/raw
-1uUlFA11igLg44OR3-UJ4Haoci1e5RC8q, libros_limpios.parquet, ./data/clean
+1V3DhBrLUy313L1Mr6KPkVgW29P4qoO46, libros_limpios.parquet, ./data/clean
 1KOH1ez6CQ4kTC6TeGNsNe6n0uuode7Uc, autores_limpios.parquet, ./data/clean
