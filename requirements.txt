@@ -21,3 +21,7 @@ pytrends
 --otras--
 pandas
 re
+fuzzywuzzy
+os
+country_converter
+pyarrow (parquet)
