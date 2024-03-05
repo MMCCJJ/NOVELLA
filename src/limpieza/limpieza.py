@@ -232,3 +232,28 @@ def juntarLibros(dfBestsellers, dfLibros):
         ],
         ignore_index = True
     )
+    
+def prevBestSellersAutores(df):
+""" Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
+bestsellers que tiene el mismo autor en la tabla con fecha previa a cada fila"""
+    # Tratamos los valores missing de autores
+    df['Author'] = df['Author'].fillna('')
+
+    # Sacamos los autores individuales en formato lista
+    df['Author'] = df['Author'].apply(lambda x: re.split(r'\band\b|\bwith\b|\s*,\s*', x))
+
+    # Creamos un df con un autor por fila y ordenamos por fecha
+    df_exploded = df.explode('Author')
+    df_exploded = df_exploded.sort_values(by='Date')
+    
+    # Agrupamos por autor y contamos las instancias
+    df_exploded['cumulative_count'] = df_exploded.groupby('Author').cumcount()
+    
+    # Guardamos el número máximo de bestsellers anteriores de la tabla en el df original
+    df = pd.merge(df, df_exploded.groupby('Title')['cumulative_count'].max().reset_index(), on='Title', how='left')
+    df = df.rename(columns={'cumulative_count': 'PrevBestSellAuthor'})
+
+    # Los que no sean bestsellers deben tener esta nueva variable a cero
+    df.loc[df['potencialBS'] == 0, 'PrevBestSellAuthor'] = 0
+    
+    return df
