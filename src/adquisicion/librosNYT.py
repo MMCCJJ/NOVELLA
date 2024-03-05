@@ -14,7 +14,7 @@ MONTH_INI = 2
 DAY_INI = 4
 
 # Semanas a retroceder por defecto
-WEEKS_BACK = 52
+WEEKS_BACK = 52 * 5
 
 """
     La lista NYT tiene distintas categorías para los libros bestsellers.
@@ -25,7 +25,13 @@ CATEGORIES_WITH_URLS = {
         "Combined Print & E-Book Fiction": "/combined-print-and-e-book-fiction/",
         "Hardcover Fiction": "/hardcover-fiction/",
         "Paperback Trade Fiction": "/trade-fiction-paperback/"
-    },
+    }
+}
+
+"""
+
+Resto de categorías:
+
     "NONFICTION": {
         "Combined Print & E-Book Nonfiction": "/combined-print-and-e-book-nonfiction/",
         "Hardcover Nonfiction": "/hardcover-nonfiction/",
@@ -38,7 +44,8 @@ CATEGORIES_WITH_URLS = {
         "Children’s Series": "/series-books/",
         "Young Adult Hardcover": "/young-adult-hardcover/"
     }
-}
+
+"""
 
 # ---  FUNCIONES ---
 def minusWeek(day, month, year):

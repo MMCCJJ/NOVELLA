@@ -16,7 +16,7 @@ MES_INI = 1
 YEAR_INI = 2024
 
 # Meses en los que retrocedemos
-MESES_ATRAS = 2
+MESES_ATRAS = 12 * 5
 
 def restarMes(month, year):
     """Resta un mes a la fecha dada (sin días)"""
