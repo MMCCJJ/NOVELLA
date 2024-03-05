@@ -1,4 +1,5 @@
 import pandas as pd
+import pyarrow.parquet as pq
 
 import adquisicion.librosNYT as librosNYT
 import adquisicion.librosPopulares as librosPopulares
@@ -6,10 +7,16 @@ import adquisicion.goodreads as goodreads
 import adquisicion.barnesAndNoble as barnesAndNoble
 import adquisicion.googleTrends as googleTrends
 
+import adquisicion.autoresGoodreads as autoresGoodreads
+import adquisicion.autoresWikipedia as autoresWiki
+
 import limpieza.limpieza as limpieza
+import limpieza.limpieza_autores as limpiezaAutores
 
 def main():
 
+    # --- LIBROS ---
+    
     # Obtenemos los libros de la lista de bestsellers del NYT
     dfNYT = librosNYT.getBooksNYT()
 
@@ -63,8 +70,18 @@ def main():
     dfLibros = limpieza.soloFiccion(dfLibros)
     dfLibros = limpieza.eliminarBestsellersPrecoces(dfLibros)
 
-    dfLibros.to_csv("libros.csv")
+    dfLibros.to_parquet("libros.parquet")
 
+    # --- AUTORES ---
+
+    # Obtenemos información de los autores a partir de la lista de libros
+    dfAutoresWiki = autoresWiki.generarDfAutores(dfLibros)
+    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads(dflibros)
+
+    # Juntamos la información de ambos df y limpiamos los datos
+    dfAutores = limpiaAutores(dfAutoresWiki, dfAutoresGoodreads)
+
+    dfAutores.to_parquet('autores.parquet')
 
 
 def getInfoGoodReads(dfLibros):
