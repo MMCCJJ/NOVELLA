@@ -157,6 +157,7 @@ def limpiaAutores():
     autores = columnaAInt(autores, "StartYear")
     autores = columnaAInt(autores, "HasTwitter")
 
+    # Creamos una nueva columna con el año de nacimiento
     autores['YearBirth'] = autores['Birthday'].apply(extraerAnio)
 
     # Generamos la nueva columna Country
