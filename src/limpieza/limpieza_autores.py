@@ -178,6 +178,7 @@ def limpiaAutores():
     autores = autores.drop('Birthday', axis=1)
     autores = autores.drop('Nationality', axis=1)
     autores = autores.drop('Born', axis=1)
+    autores = autores.drop('Birthplace', axis=1)
 
     # Reseteamos el índice
     autores = autores.reset_index(drop=True)
