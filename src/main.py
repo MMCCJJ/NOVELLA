@@ -76,7 +76,7 @@ def main():
 
     # Obtenemos información de los autores a partir de la lista de libros
     dfAutoresWiki = autoresWiki.generarDfAutores(dfLibros)
-    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads(dflibros)
+    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads(dflibros, './data')
 
     # Juntamos la información de ambos df y limpiamos los datos
     dfAutores = limpiaAutores(dfAutoresWiki, dfAutoresGoodreads)
