@@ -232,3 +232,22 @@ def juntarLibros(dfBestsellers, dfLibros):
         ],
         ignore_index = True
     )
+
+def anyadirColumna(df1, df2, columna):
+    """Añade la columna especificada del DataFrame df2 al DataFrame df1 """
+   
+    if columna not in df2.columns:
+        raise ValueError(f"La columna '{columna}' no existe en el segundo DataFrame.")
+
+    df = pd.merge(df1, df2[['Title', 'Author' ,columna]], on=['Title', 'Author'], how = 'left')
+    
+    return df
+
+def corregirWeeksOnList(df):   
+    df["Weeks on List"].fillna(0, inplace=True)
+    return df
+
+def eliminarBestsellersPrecoces(df, mediana = 20):
+    return df[df["DaysDifference"] >= mediana]
+
+
