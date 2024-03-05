@@ -25,3 +25,5 @@ fuzzywuzzy
 os
 country_converter
 pyarrow (parquet)
+sklearn
+Levenshtein

@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
+import re
+import Levenshtein
 
 # Columnas innecesarias que se eliminarán
 COLUMNAS_INNECESARIAS = ["Main Category", "url", "Subcategory", "Publisher"]
@@ -251,8 +253,9 @@ def eliminarBestsellersPrecoces(df, mediana = 20):
     return df[df["DaysDifference"] >= mediana]
 
 def prevBestSellersAutores(df):
-""" Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
-bestsellers que tiene el mismo autor en la tabla con fecha previa a cada fila"""
+    """ Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
+    bestsellers que tiene el mismo autor en la tabla con fecha previa a cada fila"""
+
     # Tratamos los valores missing de autores
     df['Author'] = df['Author'].fillna('')
 
