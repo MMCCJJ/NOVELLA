@@ -124,7 +124,7 @@ def extraerPais(row):
     
     return pd.NA  # Si no se encuentra el país, devuelve pd.NA
     
-def limpiaAutores(autores_wiki, autores_goodsreads):
+def limpiaAutores(autores_wiki, autores_goodreads):
     """Limpia la información de los autores extraída de Wikipedia y goodreads"""
 
     autores_wiki = corregirAutores(autores_wiki)
