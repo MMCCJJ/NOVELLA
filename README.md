@@ -32,9 +32,15 @@ Asegúrate de tener instalado Python en tu dispositivo (preferiblemente con la v
 
 **Ejecución del proyecto**
 
-Una vez instaladas las dependencias, puedes ejecutar el proyecto. Cada una de la tareas (adquisición de los datos, limpieza, etc.) tiene su propio *main*, ejecútalos según sean tus necesidades. Un ejemplo de ejecución desde la terminal puede ser:
+Una vez instaladas las dependencias, puedes ejecutar el proyecto. Cada una de la tareas (adquisición de los datos, limpieza, etc.) tiene su propio *main*, ejecútalos según sean tus necesidades. Tanto la etapa de adquisición como la de limpieza disponen de dos *main* cada una, ya que para obtener correctamente nuestros datos es necesario ir alternándolas. Por este motivo, el orden correcto de ejecución es el siguiente:
 
-<code> python main_adquisicion.py </code>
+<code> python main_adquisicion_1.py </code>
+
+<code> python main_limpieza_1.py </code>
+
+<code> python main_adquisicion_2.py </code>
+
+<code> python main_limpieza_2.py </code>
 
 Para trabajar con estos archivos, también puedes utilizar PyCharm. Simplemente abre PyCharm y carga el directorio del proyecto. Desde allí, puedes abrir y editar los archivos Python, ejecutarlos y depurarlos según sea necesario.
 
