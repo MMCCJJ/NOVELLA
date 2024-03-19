@@ -124,16 +124,11 @@ def extraerPais(row):
     
     return pd.NA  # Si no se encuentra el país, devuelve pd.NA
     
-def limpiaAutores():
+def limpiaAutores(autores_wiki, autores_goodreads):
     """Limpia la información de los autores extraída de Wikipedia y goodreads"""
-    # Cargamos los autores con la información de Wikipedia
-    autores_wiki = pd.read_csv('autores.csv', index_col=0)
 
     autores_wiki = corregirAutores(autores_wiki)
     autores_wiki = eliminarErroresWiki(autores_wiki)
-
-    # Cargamos los autores con la información de goodreads
-    autores_goodreads = pd.read_csv('autores_goodreads.csv', index_col=0)
 
     autores_goodreads = corregirAutores(autores_goodreads)
 
@@ -175,10 +170,15 @@ def limpiaAutores():
 
     # Por último eliminamo la columna NumChild ya que no es relevante
     autores = autores.drop('NumChild', axis=1)
+    autores = autores.drop('Birthday', axis=1)
+    autores = autores.drop('Nationality', axis=1)
+    autores = autores.drop('Born', axis=1)
+    autores = autores.drop('Birthplace', axis=1)
 
     # Reseteamos el índice
     autores = autores.reset_index(drop=True)
-    autores.to_parquet('AUTORES_LIMPIOS.parquet')
+
+    return autores
 
 
     

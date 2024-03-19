@@ -1,27 +1,14 @@
-LIBRERÍAS REQUERIDAS PARA NUESTRO PROYECTO:
---web scraping--
-requests
-selenium
-bs4 (BeautifulSoup)
-asyncio
-playwright.async_api
-
---presencia de color--
-PIL
-io
-
---fechas--
-datetime
-dateutils
-time
-
---google trends--
-pytrends
-
---otras--
-pandas
-re
-fuzzywuzzy
-os
-country_converter
-pyarrow (parquet)
+beautifulsoup4==4.12.3
+country_converter==1.2
+fuzzywuzzy==0.18.0
+pandas==2.2.1
+Pillow==10.2.0
+playwright==1.41.1
+pyarrow==15.0.0
+python_dateutil==2.8.2
+python_Levenshtein==0.25.0
+pytrends==4.9.2
+Requests==2.31.0
+scikit_learn==1.4.1.post1
+selenium==4.18.1
+async-lru==2.0.4

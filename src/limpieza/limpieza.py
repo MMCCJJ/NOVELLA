@@ -1,5 +1,7 @@
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
+import re
+import Levenshtein
 
 # Columnas innecesarias que se eliminarán
 COLUMNAS_INNECESARIAS = ["Main Category", "url", "Subcategory", "Publisher"]
@@ -232,10 +234,39 @@ def juntarLibros(dfBestsellers, dfLibros):
         ],
         ignore_index = True
     )
+
+def anyadirColumna(df1, df2, columna):
+    """Añade la columna especificada del DataFrame df2 al DataFrame df1 """
+   
+    if columna not in df2.columns:
+        raise ValueError(f"La columna '{columna}' no existe en el segundo DataFrame.")
+
+    df = pd.merge(df1, df2[['Title', 'Author' ,columna]], on=['Title', 'Author'], how = 'left')
     
+    return df
+
+def contieneFiccion(cadena):
+    lista = str(cadena).strip("[]").replace("'", "").split(", ")
+    return 'Fiction' in lista
+
+def soloFiccion(df):
+    
+    filtro1 = df["Main Category"] == "FICTION"
+    filtro2 = df["GenresList"].apply(contieneFiccion)
+    
+    return df[filtro1 | filtro2]
+
+def corregirWeeksOnList(df):   
+    df["Weeks on List"].fillna(0, inplace=True)
+    return df
+
+def eliminarBestsellersPrecoces(df, mediana = 20):
+    return df[df["DaysDifference"] >= mediana]
+
 def prevBestSellersAutores(df):
-""" Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
-bestsellers que tiene el mismo autor en la tabla con fecha previa a cada fila"""
+    """ Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
+    bestsellers que tiene el mismo autor en la tabla con fecha previa a cada fila"""
+
     # Tratamos los valores missing de autores
     df['Author'] = df['Author'].fillna('')
 
