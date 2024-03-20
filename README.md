@@ -34,13 +34,13 @@ Asegúrate de tener instalado Python en tu dispositivo (preferiblemente con la v
 
 Una vez instaladas las dependencias, puedes ejecutar el proyecto. Cada una de la tareas (adquisición de los datos, limpieza, etc.) tiene su propio *main*, ejecútalos según sean tus necesidades. Tanto la etapa de adquisición como la de limpieza disponen de dos *main* cada una, ya que para obtener correctamente nuestros datos es necesario ir alternándolas. Por este motivo, el orden correcto de ejecución es el siguiente:
 
-<code> python main_adquisicion_1.py </code>
+<code> python main_adquisicion_1.py </code> - Descarga la lista de libros del NYT y de libros populares de GoodReads.
 
-<code> python main_limpieza_1.py </code>
+<code> python main_limpieza_1.py </code> - Limpia los títulos, junta todos los libros y elimina duplicados.
 
-<code> python main_adquisicion_2.py </code>
+<code> python main_adquisicion_2.py </code> - Descarga información a partir de los títulos limpios de GoodReads, precios, GoogleTrends y datos de los autores de Wikipedia y GoodReads.
 
-<code> python main_limpieza_2.py </code>
+<code> python main_limpieza_2.py </code> - Limpia el conjunto de libros y autores. Incluye tratamiento de valores nulos, creación de nuevas variables, formatea las fechas, elimina variables innecesarias y deja los datos listos para el entrenamiento del modelo.
 
 Para trabajar con estos archivos, también puedes utilizar PyCharm. Simplemente abre PyCharm y carga el directorio del proyecto. Desde allí, puedes abrir y editar los archivos Python, ejecutarlos y depurarlos según sea necesario.
 
