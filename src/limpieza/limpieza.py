@@ -6,20 +6,8 @@ import Levenshtein
 # Columnas innecesarias que se eliminarán
 COLUMNAS_INNECESARIAS = ["Main Category", "url", "Subcategory", "Publisher"]
 
-IMPUREZAS_AUTORES = [
-            ", edited by ",
-            ". Illustrated by ",
-            "tten and illustrated by ",
-            'ted by',
-            'h an introduction by',
-            'h related materials by ',
-            'the office of the special counsel',
-            'et al. Illustrated by',
-            '. Edited by',
-            ', with recipes by',
-            'as told to'
-            ]
 
+# Formatos de libro válidos (para imputar los precios)
 FORMATOS_VALIDOS = ["hardcover", "paperback", "ebook"]
 
 def corregirTitulos(df):
@@ -38,19 +26,6 @@ def eliminarColumnasInnecesarias(df):
     
     return df
 
-def corregirAutores(df):
-    """Corrige los nombres de los autores, eliminando espacios en blanco sobrantes y otras impurezas encontradas"""
-
-    df["Author"] = df["Author"].apply(str.strip)
-
-    def quitarImpurezas(x):
-        for i in IMPUREZAS_AUTORES: 
-            x = x.split(i, 1)[0]
-        return x
-        
-    df["Author"] = df["Author"].apply(quitarImpurezas)
-    
-    return df
 
 def limpiarNumPaginas(df):
     """Devuelve un df cuyas filas tienen un número de páginas correcto"""
@@ -166,12 +141,17 @@ def imputarPrecios(df, vecinos = 5):
     return df
 
 def coincidenciasLevenshtein(df1, df2, umbralT = 2, umbralA = 2):
-    
+    """Comprueba coincidencias por parejas título-autor en función de las distancias Levenshtein,
+    devuelve los títulos coincidentes del segundo df """
+
+    # Almacena los títulos que coinciden del segundo df
     coincidencias = []
     
+
     df1 = df1.copy()
     df2 = df2.copy()
     
+    # Limpiamos los títulos y los autores
     df1["Title"] = df1["Title"].apply(lambda x: str(x).upper().strip())
     df2["Title"] = df2["Title"].apply(lambda x: str(x).upper().strip())
     
@@ -179,13 +159,18 @@ def coincidenciasLevenshtein(df1, df2, umbralT = 2, umbralA = 2):
     df2["Author"] = df2["Author"].apply(lambda x: x.split()[0])
     
     cont = 0
+
+    # Recorremos todas las combinaciones entre parejas
     for t1, a1 in zip(df1['Title'], df1['Author']):
         for t2, a2 in zip(df2['Title'], df2['Author']):
             
+            # Calculamos distancias Levenshtein
             distanciaT = Levenshtein.distance(t1, t2)
             distanciaA = Levenshtein.distance(a1, a2)
             
+            # Si las distancias en ambos (título-autor) son menores que el umbral -> HAY COINCIDENCIA
             if distanciaT <= umbralT and distanciaA <= umbralA:
+                # Añadimos el título del segundo df a la lista de coincidencias
                 coincidencias.append(t2)
                 cont += 1
                 
@@ -194,19 +179,27 @@ def coincidenciasLevenshtein(df1, df2, umbralT = 2, umbralA = 2):
     return list(set(coincidencias))
 
 def eliminarCoincidencias(dfBestsellers, dfLibros):
-    
+    """Elimina de un df con libros aquellas entradas que coinciden en título y autor (con una
+    distancia Levenshtein puesto que son fuentes distintas) en un df de libros bestsellers"""
+
+    # Calculamos las coincidencias
     titulosCoincidentes = coincidenciasLevenshtein(dfBestsellers, dfLibros)
+    # Nos quedamos con aquellas entradas que no hayan tenido coincidencias
     filtro = dfLibros["Title"].apply(lambda x: str(x).upper() not in titulosCoincidentes) 
     
     return dfLibros[filtro].reset_index(drop = True)
 
 def crearColumnaPotencialBS(df, esPotencialBS = False):
+    """Crea una columna indicando si el libro es un bestseller potencial (1) o no (0)"""
     df["potencialBS"] = int(esPotencialBS)
     return df
 
 def agruparTitulosBestsellers(df):
-    
-    agrupados = df.groupby(['Title', 'Author', 'Publisher', 'Main Category']).agg(
+    """Agrupa los libros bestsellers de un df, quedándose con la primera fecha de aparición y con
+    el máximo de semanas que lleva en la lista"""
+
+    # Agrupamos los datos
+    agrupados = df.groupby(['Title', 'Author', 'Main Category']).agg(
         {
             'Description': 'first',
             'Date': 'min', 
@@ -215,18 +208,22 @@ def agruparTitulosBestsellers(df):
         }
     )
     
+    # Convertimos las subcategorías en una lista con valores no duplicados
     agrupados["Subcategory"] = agrupados["Subcategory"].apply(lambda x: list(set(x)))
     
+    # Ordenamos los libros por fecha
     agrupados = agrupados.sort_values(by = "Date").reset_index()
     
     return agrupados
 
 def eliminarDuplicados(dfLibros):
+    """Elimina entradas duplicadas con respecto a la clave Título-Autor"""
     dfLibros = dfLibros.drop_duplicates(subset=['Title', 'Author'], keep='first')
     return dfLibros
 
 def juntarLibros(dfBestsellers, dfLibros):
-    
+    """Combina libros bestsellers y no bestsellers, para distinguirlos crea la columna
+    PotencialBS, que indica si es BS o no"""
     return pd.concat(
         [
             crearColumnaPotencialBS(dfBestsellers, True),
@@ -236,7 +233,7 @@ def juntarLibros(dfBestsellers, dfLibros):
     )
 
 def anyadirColumna(df1, df2, columna):
-    """Añade la columna especificada del DataFrame df2 al DataFrame df1 """
+    """Añade la columna especificada del DataFrame df2 al DataFrame df1"""
    
     if columna not in df2.columns:
         raise ValueError(f"La columna '{columna}' no existe en el segundo DataFrame.")
@@ -246,21 +243,25 @@ def anyadirColumna(df1, df2, columna):
     return df
 
 def contieneFiccion(cadena):
+    """Verifica que una cadena de texto contiene Fiction"""
     lista = str(cadena).strip("[]").replace("'", "").split(", ")
     return 'Fiction' in lista
 
 def soloFiccion(df):
-    
+    """Devuelve un df solo con los libros de categoría ficción"""
     filtro1 = df["Main Category"] == "FICTION"
     filtro2 = df["GenresList"].apply(contieneFiccion)
     
     return df[filtro1 | filtro2]
 
 def corregirWeeksOnList(df):   
+    """Corrige la columna WeeksOnList, añadiendo ceros donde haya Nas"""
     df["Weeks on List"].fillna(0, inplace=True)
     return df
 
 def eliminarBestsellersPrecoces(df, mediana = 20):
+    """Elimina aquellas filas en las que los bestsellers sean inferiores a la mediana de días
+    en que se convierten desde su publicación"""
     return df[df["DaysDifference"] >= mediana]
 
 def prevBestSellersAutores(df):
@@ -294,6 +295,7 @@ def gestionarFechasParaTrends(df):
 
     DIAS = 20
     
+    # Nos quedamos con aquellos libros que son bestsellers
     df1 = df[df["potencialBS"] == 1]
 
     # Convertir las columnas a tipo de dato de fecha
@@ -309,6 +311,7 @@ def gestionarFechasParaTrends(df):
     df1['DatePublished'] = pd.to_datetime(df1['DatePublished'])
     df1['DaysDifference'] = (df1['Date'] - df1['DatePublished']).dt.days
     
+    # Nos quedamos ahora con los no bestsellers
     df2 = df[df["potencialBS"] == 0]
     df2['DatePublished'] = pd.to_datetime(df2['DatePublished'], errors='coerce')
 

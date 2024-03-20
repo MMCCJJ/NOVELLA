@@ -3,6 +3,7 @@ import re
 import country_converter as coco
 import pyarrow.parquet as pq
 
+# Impurezas que hemos encontrado entre los distintos autores
 IMPUREZAS_AUTORES = [
             ", edited by ",
             ". Illustrated by ",

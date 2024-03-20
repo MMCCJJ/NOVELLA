@@ -101,8 +101,10 @@ def getPopularBooks(ma = MESES_ATRAS, month = MES_INI, year = YEAR_INI):
 
             title_element = container.find("a", {'data-testid': 'bookTitle'})
 
+            # Si encuentra el título
             if title_element:
 
+                # Extraemos el título, autor y descripción
                 title = title_element.text.strip().replace('[', '').replace(']', '').split('(')[0]
                 titles.append(title)
 

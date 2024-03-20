@@ -61,13 +61,17 @@ def getTrends(df):
         data = getInterestOverTime(keywordsBook, CATEGORIA_LIBROS, tfM)
         try:
 
+            # Si tiene éxito se suman las puntuaciones y se añade a la lista
             suma = sum(data[book])
             interestBooks.append(suma)
             
         except Exception as e:
+
+            # Si hay un error se añade un 0 a la lista
             interestBooks.append(0)
             count429 += 1
         
+        # Pausa tras varios errores 429 para suavizar los bloqueos
         if count429 == 10:
             count429 = 0
             time.sleep(60)
@@ -76,6 +80,7 @@ def getTrends(df):
         totalCount += 1
         time.sleep(1)
 
+    # Creamos la columna con los datos obtenidos
     df["BookInterest1M"] = interestBooks
 
     return df
