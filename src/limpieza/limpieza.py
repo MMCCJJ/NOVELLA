@@ -278,15 +278,16 @@ def prevBestSellersAutores(df):
     df_exploded = df.explode('Author')
     df_exploded = df_exploded.sort_values(by='Date')
     
-    # Agrupamos por autor y contamos las instancias
-    df_exploded['cumulative_count'] = df_exploded.groupby('Author').cumcount()
+    # Agrupamos por autor y contamos las instancias de bestsellers anteriores
+    # (sin contar la propia fila)
+    df_exploded['PrevBestSellAuthor'] = df_exploded.groupby('Authors')['potencialBS'].cumsum() - df_exploded['potencialBS']
     
     # Guardamos el número máximo de bestsellers anteriores de la tabla en el df original
-    df = pd.merge(df, df_exploded.groupby('Title')['cumulative_count'].max().reset_index(), on='Title', how='left')
-    df = df.rename(columns={'cumulative_count': 'PrevBestSellAuthor'})
-
-    # Los que no sean bestsellers deben tener esta nueva variable a cero
-    df.loc[df['potencialBS'] == 0, 'PrevBestSellAuthor'] = 0
+    max_prev_bestsellers = df_exploded.groupby('Title')['PrevBestSellAuthor'].max().reset_index()
+    df = pd.merge(df, max_prev_bestsellers, on='Title', how='left')
+    
+    # Reemplazamos los valores nulos con 0
+    df['PrevBestSellAuthor'] = df['PrevBestSellAuthor'].fillna(0).astype(int)
     
     return df
 
