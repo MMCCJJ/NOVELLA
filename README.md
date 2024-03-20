@@ -92,7 +92,10 @@ Corresponde a la adquisición de los datos de las distintas fuentes.
 
 <code>**Carpeta _limpieza_**</code>
 
-Contiene los módulos relacionados con la limpieza de los datos, su integración y la creación de nuevas variables. Contiene un único módulo <code>limpieza.py</code> con todas las funciones correspondientes.
+Contiene los módulos relacionados con la limpieza de los datos, su integración y la creación de nuevas variables.
+
+- <code>limpieza.py</code> - Contiene las funciones correspondientes a los libros para imputar los precios faltantes, seleccionar solo los de categoría 'Ficción'.
+- <code>limpieza_autores.py</code> - Contiene las funciones correspondientes a los autores para eliminar errores, añade las columnas 'Country' y 'hasWikipedia', etc.
 
 <code>**Carpeta _exploracion_**</code>
 
