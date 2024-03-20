@@ -6,7 +6,7 @@ import datetime
 
 # Módulo para crear un dataframe con la información biográfica de los autores
 def crearDfAutores(df_libros):
-    """Crea y devuelve un df con los nombres de los autores y sus URLs a partir de un dataframe con libros y autores"""
+    """Crea y devuelve un df con los nombres de los autores y una URL de uno de sus libros a partir de un dataframe con libros y autores"""
     columnas = ['FullName', 'URL']
     datos_autores = []
 
@@ -252,16 +252,15 @@ def getInfoAutor(nombre_autor):
 
 def generarDfAutores(df_libros):
     """Genera y devuelve un df con la información de los autores recopilada de Wikipedia a partir de los autores del df de libros de entrada"""
+
     df_autores = crearDfAutores(df_libros)
-    df_autores.to_csv('./raw/autores_url.csv')
+    # Lo guardamos ya que lo utilizaremos también en autoresGoodreads
+    df_autores.to_csv('autores_url.csv')
 
     # Creamos un df con la info recopilada de GoodReads
     df_info = df_autores['FullName'].apply(getInfoAutor).apply(pd.Series)
 
     # Combinamos los dfs
     df_autores = pd.concat([df_autores, df_info], axis=1)
-
-    # Guardamos el csv resultante
-    df_autores.to_csv('autores.csv')
 
     return df_autores

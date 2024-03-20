@@ -33,7 +33,7 @@ def main():
     # Obtenemos información de los autores a partir de la lista de libros y la almacenamos
     dfAutoresWiki = autoresWiki.generarDfAutores(dfLibros)
     dfAutoresWiki.to_csv('autores_wikipedia.csv')
-    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads(dfLibros, './data')
+    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads('./data')
     dfAutoresGoodreads.to_csv('autores_goodreads.csv')
 
 def getInfoGoodReads(dfLibros):

@@ -115,12 +115,12 @@ def getInfoAuthorGoodReads(url_libro, nombre_autor):
         'NameSearched' : None
     }
 
-def generarDfAutoresGoodReads(df_libros, ruta_carpeta):
+def generarDfAutoresGoodReads(ruta_carpeta):
     """Devuelve y almacena un dataframe con información sacada de la página de goodreads de cada autor"""
     
     # Cargamos el csv con los nombres y urls de ejemplo de un libro de cada autor
     # Este csv se generó en el módulo autoresWikipedia.py
-    df_autores = pd.read_csv('./raw/autores_url.csv', index_col=0)
+    df_autores = pd.read_csv('autores_url.csv', index_col=0)
 
     # Dividimos el DataFrame en grupos de 300 filas para facilitar su procesamiento
     grupos = [df_autores.iloc[i:i+300] for i in range(0, len(df_autores), 300)]
