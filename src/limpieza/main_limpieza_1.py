@@ -27,6 +27,8 @@ def main():
     # Eliminamos posibles parejas libro-autor duplicadas
     dfLibros = limpieza.eliminarDuplicados(dfLibros)
 
+    dfLibros = limpieza.gestionarFechasParaTrends(dfLibros)
+
     # Almacenamos el dataframe resultante (en drive corresponde a libros1.csv y libros2.csv
     # ya que lo dividimos para facilitar el procesamiento)
     dfLibros.to_csv('libros.csv')

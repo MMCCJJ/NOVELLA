@@ -76,10 +76,10 @@ def main():
 
     # Obtenemos información de los autores a partir de la lista de libros
     dfAutoresWiki = autoresWiki.generarDfAutores(dfLibros)
-    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads(dflibros, './data')
+    dfAutoresGoodreads = autoresGoodreads.generarDfAutoresGoodReads(dfLibros, './data')
 
     # Juntamos la información de ambos df y limpiamos los datos
-    dfAutores = limpiaAutores(dfAutoresWiki, dfAutoresGoodreads)
+    dfAutores = limpiezaAutores(dfAutoresWiki, dfAutoresGoodreads)
 
     dfAutores.to_parquet('autores.parquet')
 
