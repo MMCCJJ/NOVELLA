@@ -9,19 +9,18 @@ def main():
 
     # --- LIBROS ---
     
-    dfLibros = limpieza.corregirWeeksOnList(dfLibros)
+    
+    dfLibros = limpieza.eliminarNulos(dfLibros)
     dfLibros = limpieza.limpiarSagas(dfLibros)
     dfLibros = limpieza.limpiarNumPaginas(dfLibros)
 
-    # Creamos la columna WordsTitle
-    dfLibros = limpieza.crearWordsTitle(dfLibros) # NO ESTÁ???
+    dfLibros = limpieza.corregirWeeksOnList(dfLibros)
 
     # Imputamos precios
     dfLibros = limpieza.corregirType(dfLibros)
     dfLibros = limpieza.corregirPriceFormat(dfLibros)
     dfLibros = limpieza.imputarPrecios(dfLibros)
 
-    dfLibros = limpieza.eliminarNulos(dfLibros)
     dfLibros = limpieza.eliminarColumnasInnecesarias(dfLibros)
 
     # Nos quedamos solo con aquellos libros de ficción que han ingresado en la lista por lo menos 20 días después de su publicación

@@ -30,10 +30,21 @@ def eliminarColumnasInnecesarias(df):
 def limpiarNumPaginas(df):
     """Devuelve un df cuyas filas tienen un número de páginas correcto"""
 
+    total_libros = df.shape[0]
+
+    # Contador para libros eliminados
+    libros_eliminados = total_libros - df[df['NumPages'].apply(lambda x: str(x).isdigit())].shape[0]
+
     # Verificamos si el contenido de la columna NumPages es numérico
     df = df[df['NumPages'].apply(lambda x: str(x).isdigit())]
-    
+
+    porcentaje_eliminado = (libros_eliminados / total_libros) * 100 if total_libros != 0 else 0
+
+    print(f"Número de libros eliminados por números de páginas incorrectos: {libros_eliminados} "
+          f"({porcentaje_eliminado:.2f}% del total)")
+
     return df
+
 
 def limpiarSagas(df):
     """Crea una columna que indica si pertenece a una saga o no, elimina la columna SagaName y corrige SagaNumber"""
@@ -57,23 +68,52 @@ def eliminarNulos(df):
     """Elimina columnas en las que hay valores nulos de variables importantes"""
     
     columnasNulos = ["Rating", "NumPages", "GenresList"]
+    total_libros = df.shape[0]
+    
+    # Contador para libros eliminados por valores nulos
+    libros_eliminados_nulos = total_libros - df.dropna(subset=columnasNulos).shape[0]
+
     df.dropna(subset=columnasNulos, inplace=True)
     
+    # Contador para libros eliminados por RedPerc == -1.0
+    libros_eliminados_portada = df[df['RedPerc'] == -1.0].shape[0]
+
     # Eliminar filas donde RedPerc es -1.0
     df = df[df['RedPerc'] != -1.0]
+
+    porcentaje_eliminado_nulos = (libros_eliminados_nulos / total_libros) * 100 if total_libros != 0 else 0
+    porcentaje_eliminado_portada = (libros_eliminados_portada / total_libros) * 100 if total_libros != 0 else 0
     
+    print(f"Número de libros eliminados por valores nulos: {libros_eliminados_nulos} "
+          f"({porcentaje_eliminado_nulos:.2f}% del total)")
+    print(f"Número de libros eliminados donde hay un error con la portada: {libros_eliminados_portada} "
+          f"({porcentaje_eliminado_portada:.2f}% del total)")
+
     return df
+
 
 def corregirType(df):
     """Filtra y coge solo aquellas filas con un formato admitido"""
     
+    FORMATOS_VALIDOS = ["ebook", "paperback", "hardcover"]
+    total_libros = df.shape[0]
+
     # Reemplazar "kindle edition" por "ebook"
     df["Type"] = df["Type"].replace("kindle edition", "ebook")
+    
+    # Contador para libros eliminados por tipo no admitido
+    libros_eliminados_tipo_invalido = total_libros - df[df["Type"].isin(FORMATOS_VALIDOS)].shape[0]
+
     # Eliminar filas que no contienen tipos admitidos
     df = df[df["Type"].isin(FORMATOS_VALIDOS)]
     
-    return df
+    porcentaje_eliminado_tipo_invalido = (libros_eliminados_tipo_invalido / total_libros) * 100 if total_libros != 0 else 0
+
+    print(f"Número de libros eliminados por tipo no admitido: {libros_eliminados_tipo_invalido} "
+          f"({porcentaje_eliminado_tipo_invalido:.2f}% del total)")
     
+    return df
+
 def corregirPriceFormat(df):
     """Comprueba si PriceFormat coincide con Type o si es un formato admitido,
     de lo contrario, la sustituye por el valor de Type y pone Price a nulo """
@@ -140,54 +180,60 @@ def imputarPrecios(df, vecinos = 5):
     
     return df
 
-def coincidenciasLevenshtein(df1, df2, umbralT = 2, umbralA = 2):
+def coincidenciasLevenshtein(df1, df2, umbralT=2, umbralA=2):
     """Comprueba coincidencias por parejas título-autor en función de las distancias Levenshtein,
-    devuelve los títulos coincidentes del segundo df """
+    devuelve las coincidencias de título y autor del segundo df"""
 
-    # Almacena los títulos que coinciden del segundo df
+    # Almacena los títulos y autores que coinciden del segundo df
     coincidencias = []
-    
 
     df1 = df1.copy()
     df2 = df2.copy()
-    
-    # Limpiamos los títulos y los autores
+
+    # Limpiamos los títulos y los autores
     df1["Title"] = df1["Title"].apply(lambda x: str(x).upper().strip())
     df2["Title"] = df2["Title"].apply(lambda x: str(x).upper().strip())
-    
+
     df1["Author"] = df1["Author"].apply(lambda x: x.split()[0])
     df2["Author"] = df2["Author"].apply(lambda x: x.split()[0])
-    
+
     cont = 0
 
     # Recorremos todas las combinaciones entre parejas
     for t1, a1 in zip(df1['Title'], df1['Author']):
         for t2, a2 in zip(df2['Title'], df2['Author']):
-            
+
             # Calculamos distancias Levenshtein
             distanciaT = Levenshtein.distance(t1, t2)
             distanciaA = Levenshtein.distance(a1, a2)
-            
+
             # Si las distancias en ambos (título-autor) son menores que el umbral -> HAY COINCIDENCIA
             if distanciaT <= umbralT and distanciaA <= umbralA:
-                # Añadimos el título del segundo df a la lista de coincidencias
-                coincidencias.append(t2)
+                # Añadimos el título y autor del segundo df a la lista de coincidencias
+                coincidencias.append((t2, a2))
                 cont += 1
-                
+
     print(f"Hay {cont} coincidencias.")
-                
+
     return list(set(coincidencias))
+
 
 def eliminarCoincidencias(dfBestsellers, dfLibros):
     """Elimina de un df con libros aquellas entradas que coinciden en título y autor (con una
     distancia Levenshtein puesto que son fuentes distintas) en un df de libros bestsellers"""
 
-    # Calculamos las coincidencias
-    titulosCoincidentes = coincidenciasLevenshtein(dfBestsellers, dfLibros)
-    # Nos quedamos con aquellas entradas que no hayan tenido coincidencias
-    filtro = dfLibros["Title"].apply(lambda x: str(x).upper() not in titulosCoincidentes) 
+    # Calculamos las coincidencias
+    coincidencias = coincidenciasLevenshtein(dfBestsellers, dfLibros)
     
-    return dfLibros[filtro].reset_index(drop = True)
+    # Nos quedamos con aquellas entradas que no hayan tenido coincidencias
+    filtro = ~dfLibros.apply(lambda x: (str(x["Title"]).upper().strip(), x["Author"].split()[0]) in coincidencias, axis=1)
+    
+    eliminados = dfLibros.shape[0] - sum(filtro)
+    porcentajeEliminado = (eliminados / dfLibros.shape[0]) * 100 if dfLibros.shape[0] != 0 else 0
+    print(f"Eliminados: {eliminados}, lo que representa un {porcentajeEliminado:.2f}% del total.")
+    
+    return dfLibros[filtro].reset_index(drop=True)
+
 
 def crearColumnaPotencialBS(df, esPotencialBS = False):
     """Crea una columna indicando si el libro es un bestseller potencial (1) o no (0)"""
@@ -218,8 +264,14 @@ def agruparTitulosBestsellers(df):
 
 def eliminarDuplicados(dfLibros):
     """Elimina entradas duplicadas con respecto a la clave Título-Autor"""
+    dimIni = dfLibros.shape[0]
     dfLibros = dfLibros.drop_duplicates(subset=['Title', 'Author'], keep='first')
+    dimFin = dfLibros.shape[0]
+    registrosEliminados = dimIni - dimFin
+    porcentajeEliminado = (registrosEliminados / dimIni) * 100 if dimIni != 0 else 0
+    print(f"Se han eliminado {registrosEliminados} registros duplicados, lo que representa un {porcentajeEliminado:.2f}% del total.")
     return dfLibros
+
 
 def juntarLibros(dfBestsellers, dfLibros):
     """Combina libros bestsellers y no bestsellers, para distinguirlos crea la columna
@@ -252,17 +304,34 @@ def soloFiccion(df):
     filtro1 = df["Main Category"] == "FICTION"
     filtro2 = df["GenresList"].apply(contieneFiccion)
     
+    libros_eliminados = df[~(filtro1 | filtro2)]
+    num_libros_eliminados = len(libros_eliminados)
+    total_libros = len(df)
+    porcentaje_eliminados = (num_libros_eliminados / total_libros) * 100 if total_libros != 0 else 0
+    
+    print(f"Número de libros eliminados: {num_libros_eliminados} ({porcentaje_eliminados:.2f}%)")
+    
     return df[filtro1 | filtro2]
+
 
 def corregirWeeksOnList(df):   
     """Corrige la columna WeeksOnList, añadiendo ceros donde haya Nas"""
     df["Weeks on List"].fillna(0, inplace=True)
     return df
 
-def eliminarBestsellersPrecoces(df, mediana = 20):
+def eliminarBestsellersPrecoces(df, mediana=20):
     """Elimina aquellas filas en las que los bestsellers sean inferiores a la mediana de días
     en que se convierten desde su publicación"""
+    num_total_filas = len(df)
+    
+    filas_eliminadas = df[df["DaysDifference"] < mediana]
+    num_filas_eliminadas = len(filas_eliminadas)
+    porcentaje_eliminado = (num_filas_eliminadas / num_total_filas) * 100 if num_total_filas != 0 else 0
+    
+    print(f"Número de filas eliminadas: {num_filas_eliminadas} ({porcentaje_eliminado:.2f}%)")
+    
     return df[df["DaysDifference"] >= mediana]
+
 
 def prevBestSellersAutores(df):
     """ Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
@@ -294,8 +363,9 @@ def gestionarFechasParaTrends(df):
     """Filtra y prepara las fechas para que puedan ser analizadas por GoogleTrends"""
 
     DIAS = 20
-    
-    # Nos quedamos con aquellos libros que son bestsellers
+    total_filas = len(df)
+
+    # Nos quedamos con aquellos libros que son bestsellers
     df1 = df[df["potencialBS"] == 1]
 
     # Convertir las columnas a tipo de dato de fecha
@@ -310,8 +380,8 @@ def gestionarFechasParaTrends(df):
     df1['Date'] = pd.to_datetime(df1['Date'])
     df1['DatePublished'] = pd.to_datetime(df1['DatePublished'])
     df1['DaysDifference'] = (df1['Date'] - df1['DatePublished']).dt.days
-    
-    # Nos quedamos ahora con los no bestsellers
+
+    # Nos quedamos ahora con los no bestsellers
     df2 = df[df["potencialBS"] == 0]
     df2['DatePublished'] = pd.to_datetime(df2['DatePublished'], errors='coerce')
 
@@ -320,13 +390,19 @@ def gestionarFechasParaTrends(df):
     # Eliminar las filas con fechas fuera de rango en df2
     df2 = df2.drop(out_of_bounds_dates.index)
 
-    # Le sumamos la mediana para calcular la columna Date
-    df2['Date'] = df2['DatePublished'] + pd.Timedelta(days= DIAS)
+    # Le sumamos la mediana para calcular la columna Date
+    df2['Date'] = df2['DatePublished'] + pd.Timedelta(days=DIAS)
 
     # Calcular la diferencia en días entre las fechas en df2
     df2['DaysDifference'] = (df2['Date'] - df2['DatePublished']).dt.days
-    
+
     df = pd.concat([df1, df2])
     df = df[df['DaysDifference'] > 0]
 
+    num_filas_eliminadas = total_filas - len(df)
+    porcentaje_eliminado = (num_filas_eliminadas / total_filas) * 100 if total_filas != 0 else 0
+
+    print(f"Número de filas eliminadas: {num_filas_eliminadas} ({porcentaje_eliminado:.2f}%)")
+
     return df
+

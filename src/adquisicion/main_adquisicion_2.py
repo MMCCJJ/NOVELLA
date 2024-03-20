@@ -7,6 +7,8 @@ import adquisicion.googleTrends as googleTrends
 import adquisicion.autoresGoodreads as autoresGoodreads
 import adquisicion.autoresWikipedia as autoresWiki
 
+import limpieza
+
 def main():
 
     """A partir de un csv con todos los libros parcialmente limpios (sin duplicados, etc)
@@ -23,6 +25,7 @@ def main():
     dfLibros = getPricesBN(dfLibros)
 
     # Obtenemos las medidas de tendencia de GoogleTrends
+    dfLibros = limpieza.gestionarFechasParaTrends(dfLibros)
     dfLibros = googleTrends.getTrends(dfLibros)
 
     # Almacenamos el dataframe en formato parquet

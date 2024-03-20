@@ -15,6 +15,9 @@ def main():
     # Agrupamos por título los bestsellers
     dfBestsellers = limpieza.agruparTitulosBestsellers(dfNYT)
 
+    # Eliminamos posibles parejas libro-autor duplicadas
+    dfPopulares = limpieza.eliminarDuplicados(dfPopulares)
+
     # Eliminamos aquellos libros que estén en populares pero que no sean bestsellers
     dfPopulares = limpieza.eliminarCoincidencias(dfBestsellers, dfPopulares)
     
@@ -23,11 +26,6 @@ def main():
 
     dfLibros = limpieza.corregirTitulos(dfLibros)
     dfLibros= limpieza.corregirAutores(dfLibros)
-
-    # Eliminamos posibles parejas libro-autor duplicadas
-    dfLibros = limpieza.eliminarDuplicados(dfLibros)
-
-    dfLibros = limpieza.gestionarFechasParaTrends(dfLibros)
 
     # Almacenamos el dataframe resultante (en drive corresponde a libros1.csv y libros2.csv
     # ya que lo dividimos para facilitar el procesamiento)
