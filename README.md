@@ -52,19 +52,19 @@ También puedes utilizar Anaconda Navigator para abrir los notebooks. Abre Anaco
 
 ### 4. Fuentes de datos
 
-- [The New York Times Best Sellers](https://www.nytimes.com/books/best-sellers/).
+- [The New York Times Best Sellers](https://www.nytimes.com/books/best-sellers/)
 
 Extraemos una lista con los libros que se han convertido en bestsellers en Estados Unidos.
 
-- [GoodReads](https://www.goodreads.com).
+- [GoodReads](https://www.goodreads.com)
 
 Obtenemos una lista de libros populares por mes de publicación. Asimismo, recopilamos información específica de cada libro (fecha de publicación, rating, géneros literarios a los que pertenece, etc.) así como de los autores. 
 
-- [Wikipedia](https://es.wikipedia.org/wiki/Wikipedia:Portada).
+- [Wikipedia](https://es.wikipedia.org/wiki/Wikipedia:Portada)
 
 Empleamos esta fuente para extraer información acerca de los autores (años en activo, sexo, nacionalidad, etc.).
 
-- [Barnes&Noble](https://www.nytimes.com/books/best-sellers/).
+- [Barnes&Noble](https://www.nytimes.com/books/best-sellers/)
 
 La mayor librería de Estados Unidos. De ella sacamos los precios de los libros.
 
@@ -81,7 +81,6 @@ Dentro de la carpera *src*, que incluye todo el código de nuestro proyecto, enc
 Corresponde a la adquisición de los datos de las distintas fuentes.
 
 - <code>librosNYT.py</code> - Recopila datos de los libros de la lista semanal de bestsellers del New York Times. Puedes especificarle el punto de partida (día, mes y año) y el número de semanas que quieres retroceder.
-
 - <code>librosPopulares.py</code> - Recoge la lista mensual de libros publicados populares de GoodReads. Del mismo modo, puedes especificarle el mes y año de partida así como el número de meses en los que retroceder. 
 - <code>goodreads.py</code> - Contiene funciones relacionadas con la adquisición de información específica de los libros en GoodReads.
 - <code>goodreadsReviews.py</code> - Recopila ratings antes de una fecha dada de un libro específico en GoodReads mediante técnicas de web crawling.
@@ -89,22 +88,24 @@ Corresponde a la adquisición de los datos de las distintas fuentes.
 - <code>autoresWikipedia.py</code> - Permite extraer información específica de un autor desde su página de Wikipedia.
 - <code>autoresGoodreads.py</code> - Permite extraer información específica de un autor desde su página de GoodReads.
 - <code>googleTrends.py</code> - Recopila el interés a lo largo del tiempo en un timeframe especificado para un libro dado.
+- <code>main_adquisicion_1.py</code> - Hace uso de los módulos *librosNYT* y *librosPopulares*.
+- <code>main_adquisicion_2.py</code> - Utiliza los módulos *goodreads*, *barnesAndNoble*, *googleTrends*, *autoresGoodreads* y *autoresWiki*.
 
 <code>**Carpeta _limpieza_**</code>
 
 Contiene los módulos relacionados con la limpieza de los datos, su integración y la creación de nuevas variables.
 
-- <code>limpieza.py</code> - Contiene las funciones correspondientes a los libros para imputar los precios faltantes, seleccionar solo los de categoría 'Ficción'.
-- <code>limpieza_autores.py</code> - Contiene las funciones correspondientes a los autores para eliminar errores, añade las columnas 'Country' y 'hasWikipedia', etc.
+- <code>limpieza.py</code> - Contiene las funciones correspondientes a los libros para imputar los precios faltantes, seleccionar los de categoría 'Ficción', etc..
+- <code>limpieza_autores.py</code> - Contiene las funciones correspondientes a los autores para eliminar errores, añadir las columnas 'Country' y 'hasWikipedia', etc.
+- <code>main_limpieza_1.py</code> - Usa únicamente el módulo *limpieza* para limpiar los datos de los libros.
+- <code>main_limpieza_2.py</code> - Usa tanto el módulo de *limpieza* como el de *limpieza_autores*.
 
 <code>**Carpeta _exploracion_**</code>
 
 Una vez completadas las dos etapas anteriores, se puede proceder a la exploración de los datos. Contiene dos notebooks:
 
 - <code>exploracion.py</code> - Exploración de los datos relacionados con los libros.
-
 - <code>exploracion_autores.py</code> - Exploración de los datos relacionados con los autores.
-
 
 <code>**Carpeta _drive_**</code>
 
