@@ -1,7 +1,6 @@
 import pandas as pd
 
 import limpieza.limpieza as limpieza
-import limpieza.limpieza_autores as limpiezaAutores
 
 def main():
 
