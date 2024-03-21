@@ -435,3 +435,23 @@ def gestionarFechasParaTrends(df):
 
     return df
 
+def anyadirReviewsHistoricas(dfLibros, dfReviews):
+    """A partir de un df de libros limpios y un df con las reviews historicas, crea dos columnas nuevas en el de libros con las reviews historicas y el numero de reviews historicas. Se encarga de que no haya duplicados y renombra las columnas del dfLibros"""
+    
+    # Elimina duplicados y renombra las columnas del dfReviews que tiene datos sin procesar
+    dfReviews.rename(columns={'Author': 'Auth'}, inplace=True)
+    dfReviews = dfReviews.drop_duplicates(subset=['Title', 'Auth'], keep='first')
+    
+    # Junta los dos df por la clave 'Titulo, Autor' para evitar duplicados
+    df = pd.merge(dfLibros, dfReviews[['Title', 'Auth', 'Rating', 'numRatings']], on=['Title', 'Auth'], how='left')
+    
+    # Renombramos las columnas
+    df.rename(columns={'Rating_x': 'CurrentRating', 'Rating_y': 'Rating20Days', 'numRatings': 'numRatings20Days'}, inplace=True)
+    
+    # Comprobamos que no se hayan añadido filas adicionales
+    assert dfLibros.shape[0] == df.shape[0]
+    
+    # Comprobamos que se han añadido correctamente solo dos columnas
+    assert dfLibros.shape[1] + 2 == df.shape[1]
+    
+    return df
