@@ -36,7 +36,8 @@ def corregirAutores(df):
     return df
 
 def eliminarErroresWiki(df):
-    """Elimina errores de la información extraída de Wikipedia"""
+    """Elimina errores de la información extraída de Wikipedia. Este error no debería de volver a ocurrir ya que
+    ocurrió por un error con los archivos."""
     
     columnas_a_eliminar = ["Birthday", "Gender", "Birthplace", "NumChild", "StartYear", "HasTwitter"]
     df = df.drop(columnas_a_eliminar, axis=1)
@@ -55,6 +56,12 @@ def eliminarFilasNulas(df):
 
     # Eliminamos las filas seleccionadas
     df = df.drop(null_rows_index)
+
+    total_autores = df.shape[0]
+    filas_eliminadas = null_rows_index.shape[0]
+    porcentaje_eliminado = (filas_eliminadas / total_autores) * 100 if total_autores != 0 else 0
+
+    print(f"Número de filas eliminadas: {filas_eliminadas} ({porcentaje_eliminado:.2f}% del total)")
 
     return df
 
@@ -129,7 +136,9 @@ def limpiaAutores(autores_wiki, autores_goodreads):
     """Limpia la información de los autores extraída de Wikipedia y goodreads"""
 
     autores_wiki = corregirAutores(autores_wiki)
-    autores_wiki = eliminarErroresWiki(autores_wiki)
+
+    # Si es necesario, eliminamos columnas duplicadas (no debería volver a ocurrir)
+    #autores_wiki = eliminarErroresWiki(autores_wiki)
 
     autores_goodreads = corregirAutores(autores_goodreads)
 
