@@ -26,9 +26,13 @@ def main():
     # Nos quedamos solo con aquellos libros de ficción que han ingresado en la lista por lo menos 20 días después de su publicación
     dfLibros = limpieza.soloFiccion(dfLibros)
     dfLibros = limpieza.eliminarBestsellersPrecoces(dfLibros)
-
+    
+    # Añadimos los ratings historicos
+    dfReviewsHist = pd.read_csv('conRatingsHistoricos.csv')
+    dfLibros = anyadirReviewsHistoricas(dfLibros, dfReviewsHist)
+    
     # Almacenamos el dataframe en formato parquet
-    dfLibros.to_parquet("libros_limpios.parquet")
+    dfLibros.to_parquet("libros_completos.parquet")
 
     # --- AUTORES ---
 
