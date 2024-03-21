@@ -6,13 +6,41 @@ import Levenshtein
 # Columnas innecesarias que se eliminarán
 COLUMNAS_INNECESARIAS = ["Main Category", "url", "Subcategory", "Publisher"]
 
-
 # Formatos de libro válidos (para imputar los precios)
 FORMATOS_VALIDOS = ["hardcover", "paperback", "ebook"]
+
+# Impurezas que hemos encontrado entre los distintos autores
+IMPUREZAS_AUTORES = [
+            ", edited by ",
+            ". Illustrated by ",
+            "tten and illustrated by ",
+            'ted by',
+            'h an introduction by',
+            'h related materials by ',
+            'the office of the special counsel',
+            'et al. Illustrated by',
+            '. Edited by',
+            ', with recipes by',
+            'as told to'
+            ]
 
 def corregirTitulos(df):
     """Corrige los títulos (capitalizar y quitar espacios en blanco en los extremos)"""
     df["Title"] = df["Title"].apply(str.capitalize).apply(str.strip)
+    return df
+
+def corregirAutores(df):
+    """Corrige los nombres de los autores, eliminando espacios en blanco sobrantes y otras impurezas encontradas"""
+
+    df["Author"] = df["Author"].apply(str.strip)
+
+    def quitarImpurezas(x):
+        for i in IMPUREZAS_AUTORES: 
+            x = x.split(i, 1)[0]
+        return x
+        
+    df["Author"] = df["Author"].apply(quitarImpurezas)
+    
     return df
 
 def eliminarColumnasInnecesarias(df):
