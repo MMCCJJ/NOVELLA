@@ -26,6 +26,9 @@ def main():
     dfLibros = limpieza.corregirTitulos(dfLibros)
     dfLibros= limpieza.corregirAutores(dfLibros)
 
+    # Nos quedamos solo con el primer autor
+    dfLibros['Author'] = dfLibros['Author'].apply(limpieza.extraer_primer_autor)
+
     # Almacenamos el dataframe resultante (en drive corresponde a libros1.csv y libros2.csv
     # ya que lo dividimos para facilitar el procesamiento)
     dfLibros.to_csv('libros.csv')

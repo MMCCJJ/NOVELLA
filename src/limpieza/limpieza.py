@@ -43,6 +43,15 @@ def corregirAutores(df):
     
     return df
 
+def extraer_primer_autor(columna_autores):
+    """Extrae el nombre del primer autor (para los libros que tienen más de uno)"""
+
+    # Divide la cadena en los casos en los que hay "with" o "and"
+    split_authors = re.split(r'\s+with\s+|\s+and\s+', columna_autores)
+
+    # Devuelve el primer autor
+    return split_authors[0]
+
 def eliminarColumnasInnecesarias(df):
     """Elimina aquellas columnas que no son relevantes"""
 
