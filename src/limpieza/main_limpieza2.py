@@ -29,7 +29,7 @@ def main():
     
     # Añadimos los ratings historicos
     dfReviewsHist = pd.read_csv('conRatingsHistoricos.csv')
-    dfLibros = anyadirReviewsHistoricas(dfLibros, dfReviewsHist)
+    dfLibros = limpieza.anyadirReviewsHistoricas(dfLibros, dfReviewsHist)
     
     # Almacenamos el dataframe en formato parquet
     dfLibros.to_parquet("libros_completos.parquet")
@@ -45,6 +45,10 @@ def main():
 
     # Almacenamos el dataframe en formato parquet
     dfAutores.to_parquet('autores_limpios.parquet')
+
+    # Hace un merge de ambos dataframe
+    df_merged = pd.merge(dfLibros, dfAutores, left_on='Author', right_on='FullName', how='left')
+    df_merged.to_csv('libros_autores.csv')
 
 if __name__ == "__main__":
     main()

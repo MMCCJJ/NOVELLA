@@ -8,6 +8,7 @@
 1M0d9mebW6pRmU_i5EHs2yKmOXMkawDY_, demonyms.csv, ./data/raw
 1gb6lkqzVaBfNLR5crUjJ17nAr91PfIpS, conRatingsHistoricos.csv, ./data/raw
 1vFsv5LOVrvw4niImGRYAHwoHqHD-GbC-, libros_limpios.csv, ./data/clean
-1KOH1ez6CQ4kTC6TeGNsNe6n0uuode7Uc, autores_limpios.parquet, ./data/clean
+18yaJwqpTiuSXqSgplmIHQkip5lbRGYs-, autores_limpios.parquet, ./data/clean
 14VavdlGrZ16rb5GJfgl6_N-kqthA_eCg, libros_completos.parquet, ./data/clean
 1ASG33D1uUhlCv1viS4Hv5TufAtrxKe_A, libros_completos.csv, ./data/clean
+1GOzFGwzphjIioA4NKavI-x7PMeD8C59H, libros_autores.csv, ./data/clean
