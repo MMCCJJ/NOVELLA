@@ -373,27 +373,19 @@ def eliminarBestsellersPrecoces(df, mediana=20):
 def prevBestSellersAutores(df):
     """ Devuelve el df de entrada (todos los libros) con una nueva columna que indica el número de
     bestsellers que tiene el mismo autor en la tabla con fecha previa a cada fila"""
-
+    
+    # Renombramos la columna de autores por si acaso
+    df.rename(columns={'Auth': 'Author'}, inplace=True)
+    
     # Tratamos los valores missing de autores
     df['Author'] = df['Author'].fillna('')
-
-    # Sacamos los autores individuales en formato lista
-    df['Author'] = df['Author'].apply(lambda x: re.split(r'\band\b|\bwith\b|\s*,\s*', x))
-
-    # Creamos un df con un autor por fila y ordenamos por fecha
-    df_exploded = df.explode('Author')
-    df_exploded = df_exploded.sort_values(by='Date')
+    
+    # Ordenamos el df por fecha
+    df = df.sort_values(by='Date')
     
     # Agrupamos por autor y contamos las instancias de bestsellers anteriores
     # (sin contar la propia fila)
-    df_exploded['PrevBestSellAuthor'] = df_exploded.groupby('Authors')['potencialBS'].cumsum() - df_exploded['potencialBS']
-    
-    # Guardamos el número máximo de bestsellers anteriores de la tabla en el df original
-    max_prev_bestsellers = df_exploded.groupby('Title')['PrevBestSellAuthor'].max().reset_index()
-    df = pd.merge(df, max_prev_bestsellers, on='Title', how='left')
-    
-    # Reemplazamos los valores nulos con 0
-    df['PrevBestSellAuthor'] = df['PrevBestSellAuthor'].fillna(0).astype(int)
+    df['PrevBestSellAuthor'] = df.groupby('Author')['potencialBS'].cumsum() - df['potencialBS']
     
     return df
 
