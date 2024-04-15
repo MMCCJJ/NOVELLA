@@ -105,12 +105,20 @@ Contiene los módulos relacionados con la limpieza de los datos, su integración
 
 Una vez completadas las dos etapas anteriores, se puede proceder a la exploración de los datos. Contiene dos notebooks:
 
-- <code>exploracion.py</code> - Exploración de los datos relacionados con los libros.
-- <code>exploracion_autores.py</code> - Exploración de los datos relacionados con los autores.
+- <code>exploracion.ipynb</code> - Exploración de los datos relacionados con los libros.
+- <code>exploracion_autores.ipynb</code> - Exploración de los datos relacionados con los autores.
 
 <code>**Carpeta _drive_**</code>
 
 Cuenta con archivos relacionados con la descarga de los conjuntos de datos almacenados en Google Drive.
+
+<code>**Carpeta _modelos_**</code>
+
+- <code>analisisVariablesRelevantes.ipynb</code> - Contiene un análisis previo de variables relevantes (correlaciones, información mútua, test chi2).
+
+Cada carpeta de este directorio se corresponde con un modelo distinto y contiene dos jupyter notebooks: uno relacionado con la selección de variables (solo si es necesario) y otro que entrena los modelos y guarda los resultados en MLFlow. Los modelos entrenados son una regresión logística con regularización, un Random Forest y un perceptrón multicapa.
+
+
 
 
 
