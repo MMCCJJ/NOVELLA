@@ -117,11 +117,3 @@ Cuenta con archivos relacionados con la descarga de los conjuntos de datos almac
 - <code>analisisVariablesRelevantes.ipynb</code> - Contiene un análisis previo de variables relevantes (correlaciones, información mútua, test chi2).
 
 Cada carpeta de este directorio se corresponde con un modelo distinto y contiene dos jupyter notebooks: uno relacionado con la selección de variables (solo si es necesario) y otro que entrena los modelos y guarda los resultados en MLFlow. Los modelos entrenados son una regresión logística con regularización, un Random Forest y un perceptrón multicapa.
-
-
-
-
-
-
-
-
