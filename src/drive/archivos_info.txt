@@ -13,6 +13,7 @@
 1ASG33D1uUhlCv1viS4Hv5TufAtrxKe_A,libros_completos.csv,./data/clean
 1GOzFGwzphjIioA4NKavI-x7PMeD8C59H,libros_autores.csv,./data/clean
 1ZickPVcxnkRv2CBIUn17zU6Q6aVs7AMK,datosEntrenamiento.parquet,../data/clean
+1PBNcysl-wnxBY0-Qlq0wEWglubyeMkmb,datosEntrenamientoRL.parquet,../data/clean
 1Q0C1ZToTL_cp9SVQf3Y2E_-1PTKGRmZ1,RL_runs.db,./databases
 1KCmOIXECANmsl9omL76plv3DsGHPciBt,RF_runs.db,./databases
 1Hc269P-BaefDlp4z2SaxLIWkL3z2vMfa,MLP_runs.db,./databases
