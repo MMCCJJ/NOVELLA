@@ -1,14 +1,18 @@
-1hYPSvk6XjSKzyp7J3JZp1EnDagNX_s77, libros1.csv, ./data/raw
-1RqHRptVaRSkmVAsiyjdbFGRQy8lATGof, libros2.csv, ./data/raw
-1jD2o1R7Mq52P1fAsV06ybRPHvzKP7Sxa, libros_procesados_1.csv, ./data/raw
-13qTbgL-Q-hE25yHqMFK_6kdeu9lQwlQO, libros_procesados_2.csv, ./data/raw
-1iabfhPoFMUfVxHfdlbxqDaBcupMCw5bc, autores_url.csv, ./data/raw
-1iuOX167_t-e6wBtoffO8WQF0sC3vsy8X, autores_wikipedia.csv, ./data/raw
-1nel4vTMyKWGiNSyyUO4I5HBMJL9LfGir, autores_goodreads.csv, ./data/raw
-1M0d9mebW6pRmU_i5EHs2yKmOXMkawDY_, demonyms.csv, ./data/raw
-1gb6lkqzVaBfNLR5crUjJ17nAr91PfIpS, conRatingsHistoricos.csv, ./data/raw
-1vFsv5LOVrvw4niImGRYAHwoHqHD-GbC-, libros_limpios.csv, ./data/clean
-18yaJwqpTiuSXqSgplmIHQkip5lbRGYs-, autores_limpios.parquet, ./data/clean
-14VavdlGrZ16rb5GJfgl6_N-kqthA_eCg, libros_completos.parquet, ./data/clean
-1ASG33D1uUhlCv1viS4Hv5TufAtrxKe_A, libros_completos.csv, ./data/clean
-1GOzFGwzphjIioA4NKavI-x7PMeD8C59H, libros_autores.csv, ./data/clean
+1hYPSvk6XjSKzyp7J3JZp1EnDagNX_s77,libros1.csv,./data/raw
+1RqHRptVaRSkmVAsiyjdbFGRQy8lATGof,libros2.csv,./data/raw
+1jD2o1R7Mq52P1fAsV06ybRPHvzKP7Sxa,libros_procesados_1.csv,./data/raw
+13qTbgL-Q-hE25yHqMFK_6kdeu9lQwlQO,libros_procesados_2.csv,./data/raw
+1iabfhPoFMUfVxHfdlbxqDaBcupMCw5bc,autores_url.csv,./data/raw
+1iuOX167_t-e6wBtoffO8WQF0sC3vsy8X,autores_wikipedia.csv,./data/raw
+1nel4vTMyKWGiNSyyUO4I5HBMJL9LfGir,autores_goodreads.csv,./data/raw
+1M0d9mebW6pRmU_i5EHs2yKmOXMkawDY_,demonyms.csv,./data/raw
+1gb6lkqzVaBfNLR5crUjJ17nAr91PfIpS,conRatingsHistoricos.csv,./data/raw
+1vFsv5LOVrvw4niImGRYAHwoHqHD-GbC-,libros_limpios.csv,./data/clean
+18yaJwqpTiuSXqSgplmIHQkip5lbRGYs-,autores_limpios.parquet,./data/clean
+14VavdlGrZ16rb5GJfgl6_N-kqthA_eCg,libros_completos.parquet,./data/clean
+1ASG33D1uUhlCv1viS4Hv5TufAtrxKe_A,libros_completos.csv,./data/clean
+1GOzFGwzphjIioA4NKavI-x7PMeD8C59H,libros_autores.csv,./data/clean
+1ZickPVcxnkRv2CBIUn17zU6Q6aVs7AMK,datosEntrenamiento.parquet,../data/clean
+1Q0C1ZToTL_cp9SVQf3Y2E_-1PTKGRmZ1,RL_runs.db,./databases
+1KCmOIXECANmsl9omL76plv3DsGHPciBt,RF_runs.db,./databases
+1Hc269P-BaefDlp4z2SaxLIWkL3z2vMfa,MLP_runs.db,./databases
