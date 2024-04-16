@@ -23,7 +23,6 @@ Fecha: 02/2024
 import requests
 import os
 
-
 def descargar_archivo_directo(id_archivo, directorio_destino, archivo_destino):
     """
     Descarga un archivo directamente desde Google Drive y lo guarda localmente.
