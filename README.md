@@ -115,5 +115,6 @@ Cuenta con archivos relacionados con la descarga de los conjuntos de datos almac
 <code>**Carpeta _modelos_**</code>
 
 - <code>analisisVariablesRelevantes.ipynb</code> - Contiene un análisis previo de variables relevantes (correlaciones, información mútua, test chi2).
+- `evaluacionModelosCandidatos.ipynb`- Contiene la evaluación de los modelos candidatos obtenidos de cada una de las carpetas del directorio. Carga y prepara los datos entrenar para los modelos creados con información de mlflow. Después aplica las distintas estrategias de análisis de rendimiento especificadas en el índice del cuaderno.
 
 Cada carpeta de este directorio se corresponde con un modelo distinto y contiene dos jupyter notebooks: uno relacionado con la selección de variables (solo si es necesario) y otro que entrena los modelos y guarda los resultados en MLFlow. Los modelos entrenados son una regresión logística con regularización, un Random Forest y un perceptrón multicapa.
