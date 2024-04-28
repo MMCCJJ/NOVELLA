@@ -52,6 +52,10 @@ METRICS = {'balanced_accuracy': 'balanced_accuracy',
 
 # --- ESTRATEGIA DE VALIDACIÓN ---
 
+def getYX(df):
+    """Devuelve los vectores y, X"""
+    return df["Bestseller"], df.drop(columns="Bestseller", axis=1)
+
 def separacionTrainTest(X, y):
     """Genera particiones estratificadas"""
     return train_test_split(X, y, test_size=TEST_SIZE, stratify=y, random_state=SEED)
@@ -103,7 +107,7 @@ def generarSMOTENC(variablesCategoricas):
 
 def generarPipeline(smotenc, modelo):
     """Devuelve el pipeline empleado para el entrenamiento de los modelos"""
-    
+
     # Definimos el transformador para codificar la variable categórica 'PriceFormat'
     column_transformer = ColumnTransformer([
         ('ohe', OneHotEncoder(), ['PriceFormat'])
