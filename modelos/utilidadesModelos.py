@@ -46,6 +46,7 @@ def specificity(y_true, y_pred):
     return tn / (tn + fp)
 
 def generarMetricas():
+    """Genera un diccinario con las métricas empleadas para evaluar los modelos"""
 
     # Convierte las funciones en funciones de puntuación para usar en RandomizedSearchCV
     sensitivity_scorer = make_scorer(sensitivity)
@@ -114,18 +115,22 @@ def generarSMOTENC(variablesCategoricas):
 # --- ESTRATEGIAS DE BÚSQUEDA ---
 
 def realizarGridSearchCV(estimador, param_grid, kf, X, y):
+    """Realiza la estrategia de búsqueda Grid Search CV"""
 
-    # Inicializamos el GridSearch
+    # Definimos la búsqueda en rejilla
     grid_search = GridSearchCV(estimator=estimador, param_grid=param_grid, cv=kf,
                             scoring=METRICS, refit = "balanced_accuracy", return_train_score=True, n_jobs=-1, error_score="raise")
 
+    # Realizamos la exploración
     grid_search.fit(X, y)
     
     return grid_search
 
 def realizarRandomizedSearchCV(estimador, param_dist, kf, X, y, iteraciones):
+    """Realiza la estrategia de búsqueda Randomized Search CV, es importante especificar
+    el número de iteraciones"""
 
-    # Definir la búsqueda aleatoria
+    # Definimos la búsqueda aleatoria
     random_search = RandomizedSearchCV(
         estimator=estimador, param_distributions=param_dist, 
         n_iter=iteraciones, cv=kf, 
@@ -134,6 +139,7 @@ def realizarRandomizedSearchCV(estimador, param_dist, kf, X, y, iteraciones):
         return_train_score=True, n_jobs = -1
     )
 
+    # Realiza la exploración
     random_search.fit(X, y)
 
     return random_search
@@ -213,6 +219,7 @@ def registrarResultadosMLFlow(nombreModelo, modelo, X, best_params, index_row, d
                 # Resultados de validación en cada fold
                 mlflow.log_metric(f"test_{M}fold{i}", df_results[f"split{i}_test_{M}"][index_row])
 
+        # Clasifica el modelo
         for key, value in tags.items():
             mlflow.set_tag(key, value)
 
@@ -229,6 +236,7 @@ def registrarResultadosMLFlow(nombreModelo, modelo, X, best_params, index_row, d
         )
 
 def registrarBaseline(modelo, scores, X, tags):
+    """Registra un modelo baseline en la base de datos"""
 
     # Registramos los resultados en MlFlow
     with mlflow.start_run():
@@ -256,6 +264,7 @@ def registrarBaseline(modelo, scores, X, tags):
             mlflow.log_metric(f"train_{metric}_mean", train_mean)
             mlflow.log_metric(f"test_{metric}_mean", test_mean)
 
+        # Clasifica el modelo
         for key, value in tags.items():
             mlflow.set_tag(key, value)
 
