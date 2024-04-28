@@ -1,19 +1,23 @@
 import pandas as pd
+import os
 import numpy as np
-from sklearn.preprocessing import RobustScaler
+
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import make_scorer
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import StratifiedKFold
-import os
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import FunctionTransformer
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+from imblearn.over_sampling import SMOTENC
+from imblearn.pipeline import Pipeline
+
 import mlflow
 import mlflow.sklearn
 from mlflow.models import infer_signature
-from imblearn.over_sampling import SMOTENC
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import FunctionTransformer
-from imblearn.pipeline import Pipeline
 
 
 # --- CONSTANTES ---
@@ -41,14 +45,18 @@ def specificity(y_true, y_pred):
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
     return tn / (tn + fp)
 
-# Convierte las funciones en funciones de puntuación para usar en RandomizedSearchCV
-sensitivity_scorer = make_scorer(sensitivity)
-specificity_scorer = make_scorer(specificity)
+def generarMetricas():
 
-# Contiene las métricas con las que evaluar los modelos
-METRICS = {'balanced_accuracy': 'balanced_accuracy',
-           'sensitivity': sensitivity_scorer,
-           'specificity': specificity_scorer}
+    # Convierte las funciones en funciones de puntuación para usar en RandomizedSearchCV
+    sensitivity_scorer = make_scorer(sensitivity)
+    specificity_scorer = make_scorer(specificity)
+
+    # Contiene las métricas con las que evaluar los modelos
+    return {'balanced_accuracy': 'balanced_accuracy',
+            'sensitivity': sensitivity_scorer,
+            'specificity': specificity_scorer}
+
+METRICS = generarMetricas()
 
 # --- ESTRATEGIA DE VALIDACIÓN ---
 
@@ -102,6 +110,33 @@ def aplicarEscaladoRobusto(X_train, X_test, variablesTransformacion):
 def generarSMOTENC(variablesCategoricas):
     """Dadas unas variables categóricas, devuelve el objeto de SMOTE-NC"""
     return SMOTENC(categorical_features = variablesCategoricas, random_state = SEED)
+
+# --- ESTRATEGIAS DE BÚSQUEDA ---
+
+def realizarGridSearchCV(estimador, param_grid, kf, X, y):
+
+    # Inicializamos el GridSearch
+    grid_search = GridSearchCV(estimator=estimador, param_grid=param_grid, cv=kf,
+                            scoring=METRICS, refit = "balanced_accuracy", return_train_score=True, n_jobs=-1, error_score="raise")
+
+    grid_search.fit(X, y)
+    
+    return grid_search
+
+def realizarRandomizedSearchCV(estimador, param_dist, kf, X, y, iteraciones):
+
+    # Definir la búsqueda aleatoria
+    random_search = RandomizedSearchCV(
+        estimator=estimador, param_distributions=param_dist, 
+        n_iter=iteraciones, cv=kf, 
+        scoring= METRICS, 
+        refit = "balanced_accuracy",
+        return_train_score=True, n_jobs = -1
+    )
+
+    random_search.fit(X, y)
+
+    return random_search
 
 # --- CREACIÓN DEL PIPELINE ---
 
@@ -191,6 +226,50 @@ def registrarResultadosMLFlow(nombreModelo, modelo, X, best_params, index_row, d
             signature=signature,
             input_example=X,
             registered_model_name=nombreModelo,
+        )
+
+def registrarBaseline(modelo, scores, X, tags):
+
+    # Registramos los resultados en MlFlow
+    with mlflow.start_run():
+        
+        # Métricas
+        m = ["balanced_accuracy", "sensitivity", "specificity"]
+
+        for metric in m:
+            
+            for fold in range(len(scores[f"train_{metric}"])):
+                
+                # Obtenemos las métricas de cada fold
+                train_fold_metric = scores[f"train_{metric}"][fold]
+                test_fold_metric = scores[f"test_{metric}"][fold]
+                
+                # Log the metric for each fold
+                mlflow.log_metric(f"train_{metric}_fold_{fold+1}", train_fold_metric)
+                mlflow.log_metric(f"test_{metric}_fold_{fold+1}", test_fold_metric)
+                
+            # Calculamos la media de los valores
+            train_mean = np.mean(scores[f"train_{metric}"])
+            test_mean = np.mean(scores[f"test_{metric}"])
+
+            # Log the mean values for train and test sets
+            mlflow.log_metric(f"train_{metric}_mean", train_mean)
+            mlflow.log_metric(f"test_{metric}_mean", test_mean)
+
+        for key, value in tags.items():
+            mlflow.set_tag(key, value)
+
+        # Infiere el signature del modelo, que describe el tipo de entrada y salida del modelo
+
+        signature = infer_signature(X, modelo.predict(X))
+
+        # Registra el modelo
+        model_info = mlflow.sklearn.log_model(
+            sk_model=modelo,
+            artifact_path="rl_model",
+            signature=signature,
+            input_example=X,
+            registered_model_name="BASELINE",
         )
 
 
