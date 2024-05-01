@@ -95,6 +95,7 @@ def getPopularBooks(ma = MESES_ATRAS, month = MES_INI, year = YEAR_INI):
         titles = []
         authors = []
         descriptions = []
+        urls = []
 
         # Recorremos los contenedores
         for container in book_containers:
@@ -107,6 +108,9 @@ def getPopularBooks(ma = MESES_ATRAS, month = MES_INI, year = YEAR_INI):
                 # Extraemos el título, autor y descripción
                 title = title_element.text.strip().replace('[', '').replace(']', '').split('(')[0]
                 titles.append(title)
+                
+                url = title_element['href']
+                urls.append(url)
 
                 author = container.find("span", class_="ContributorLink__name").text.strip()
                 authors.append(author)
@@ -117,7 +121,8 @@ def getPopularBooks(ma = MESES_ATRAS, month = MES_INI, year = YEAR_INI):
                 data = {
                     "Title": titles,
                     "Author": authors,
-                    "Description": descriptions
+                    "Description": descriptions,
+                    "URL": urls 
                 }
 
                 DF_POPULARES.append(pd.DataFrame(data))
