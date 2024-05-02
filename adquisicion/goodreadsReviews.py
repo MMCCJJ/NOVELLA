@@ -13,6 +13,8 @@ from dateutil import parser
 async def main():
     df = pd.read_csv('/Users/maria/Downloads/LIBROS_LIMPIOS.csv')
     
+    numReviews = 0
+    
     for index, row in df.iterrows():
         titulo = row['Title']
         browser_url = row['url']
@@ -108,12 +110,18 @@ async def main():
                 print(mean)
                 df.at[index, 'Rating'] = round(mean, 2)
                 df.at[index, 'numRatings'] = num_ratings
+                numReviews += 1
                 
                 print('sleep5')
                 await asyncio.sleep(5)
                 await browser.close()
                 print('Browser closed')
                 
+                if (numReviews == 10):
+                    numReviews = 0
+                    df.to_csv(f"conRatings.csv")
+                
+            
         except Exception as e:
             print(f"An error occurred for book: {str(e)}")
             continue
