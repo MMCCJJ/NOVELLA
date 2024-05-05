@@ -31,6 +31,10 @@ def main():
     dfReviewsHist = pd.read_csv('conRatingsHistoricos.csv')
     dfLibros = limpieza.anyadirReviewsHistoricas(dfLibros, dfReviewsHist)
     
+    # Añadimos columnas adicionales derivadas de los datos existentes
+    dfLibros = limpieza.wordsTitle(dfLibros)
+    dfLibros = limpieza.prevBestSellersAutores(dfLibros)
+    
     # Almacenamos el dataframe en formato parquet
     dfLibros.to_parquet("libros_completos.parquet")
 

@@ -478,7 +478,7 @@ def anyadirReviewsHistoricas(dfLibros, dfReviews):
     
     return df
     
-def añadeColumnaWordsTitle(df):
+def wordsTitle(df):
     """Cuenta el número de palabras en el título y lo guarda en una nueva columna 'WordsTitle'"""
     # Divide el título en palabras y cuenta el número de palabras
     df['WordsTitle'] = df['Title'].str.split().apply(len)
