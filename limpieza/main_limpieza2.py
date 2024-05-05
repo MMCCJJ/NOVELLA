@@ -34,6 +34,9 @@ def main():
     # Añadimos columnas adicionales derivadas de los datos existentes
     dfLibros = limpieza.wordsTitle(dfLibros)
     dfLibros = limpieza.prevBestSellersAutores(dfLibros)
+
+    # Eliminamos los libros que llevan publicados menos que la mediana (si los hay)
+    dfLibros = limpieza.publicadosMenosDeLaMediana(dfLibros)
     
     # Almacenamos el dataframe en formato parquet
     dfLibros.to_parquet("libros_completos.parquet")
