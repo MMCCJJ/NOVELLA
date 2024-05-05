@@ -100,6 +100,7 @@ Contiene los módulos relacionados con la limpieza de los datos, su integración
 - <code>limpieza_autores.py</code> - Contiene las funciones correspondientes a los autores para eliminar errores, añadir las columnas 'Country' y 'hasWikipedia', etc.
 - <code>main_limpieza_1.py</code> - Usa únicamente el módulo *limpieza* para limpiar los datos de los libros.
 - <code>main_limpieza_2.py</code> - Usa tanto el módulo de *limpieza* como el de *limpieza_autores*.
+- `main_limpieza_autores_nuevaCaptura.py` - Utiliza el módulo *limpieza_autores* para limpiar los datos de autores. Añade la columna 'HasWikipedia', selecciona las variables relevantes para el modelo final e incluye los datos de autores a los datos de libros.
 
 <code>**Carpeta _exploracion_**</code>
 
