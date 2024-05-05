@@ -70,10 +70,10 @@ def limpiarNumPaginas(df):
     total_libros = df.shape[0]
 
     # Contador para libros eliminados
-    libros_eliminados = total_libros - df[df['NumPages'].apply(lambda x: str(x).isdigit())].shape[0]
+    libros_eliminados = total_libros - df[df['NumPages'].apply(lambda x: re.match(r'^\d+(\.\d+)?$', str(x)) is not None)].shape[0]
 
     # Verificamos si el contenido de la columna NumPages es numérico
-    df = df[df['NumPages'].apply(lambda x: str(x).isdigit())]
+    df = df[df['NumPages'].apply(lambda x: re.match(r'^\d+(\.\d+)?$', str(x)) is not None)]
 
     porcentaje_eliminado = (libros_eliminados / total_libros) * 100 if total_libros != 0 else 0
 
