@@ -351,6 +351,26 @@ def soloFiccion(df):
     
     return df[filtro1 | filtro2]
 
+def eliminarNonFiction(df):
+    """Devuelve un df con los libros que no tienen la categoría 'NonFiction'"""
+    
+    filtroNonfic = df['GenresList'].str.lower().str.contains('nonfiction')
+    
+    num_total_filas = len(df)
+    
+    numNonFic = filtroNonfic.sum()
+    numBsNonFic = df[filtroNonfic]['potencialBS'].sum()
+    
+    porcentaje_eliminado = (numNonFic / num_total_filas) * 100 if numNonFic != 0 else 0
+    
+    print(f"Número de filas eliminadas: {numNonFic} ({porcentaje_eliminado:.2f}%)")
+    
+    porcentaje_bs_eliminado = (numBsNonFic / num_total_filas) * 100 if numBsNonFic != 0 else 0
+    
+    print(f"Número de filas BS eliminadas: {numBsNonFic} ({porcentaje_eliminado:.2f}%)")
+    
+    
+    return df[~filtroNonfic]
 
 def corregirWeeksOnList(df):   
     """Corrige la columna WeeksOnList, añadiendo ceros donde haya Nas"""
