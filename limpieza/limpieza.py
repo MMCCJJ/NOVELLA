@@ -410,6 +410,26 @@ def prevBestSellersAutores(df):
     
     return df
 
+def publicadosMenosDeLaMediana(df):  
+    """Elimina los libros que llevan publicados menos días que los calculados en el conjunto
+    de entrenamiento mediante la mediana, en este caso de 19 días"""
+
+    FECHA_ADQUISICION = pd.to_datetime("2024-05-05")
+    MEDIANA_DIAS = 19
+
+    total_filas = len(df)
+
+    num_filas_eliminadas = ((FECHA_ADQUISICION - df['DatePublished']).dt.days < MEDIANA_DIAS).sum()
+    porcentaje_eliminado = (num_filas_eliminadas / total_filas) * 100 if total_filas != 0 else 0
+
+    diferencia_dias = (FECHA_ADQUISICION - df['DatePublished']).dt.days
+    indices_a_eliminar = diferencia_dias[diferencia_dias < 19].index
+    df = df.drop(indices_a_eliminar)
+
+    print(f"Número de filas eliminadas: {num_filas_eliminadas} ({porcentaje_eliminado:.2f}%)")
+
+    return df
+
 def gestionarFechasParaTrends(df):
     """Filtra y prepara las fechas para que puedan ser analizadas por GoogleTrends"""
 
