@@ -477,3 +477,9 @@ def anyadirReviewsHistoricas(dfLibros, dfReviews):
     assert dfLibros.shape[1] + 2 == df.shape[1]
     
     return df
+    
+def añadeColumnaWordsTitle(df):
+    """Cuenta el número de palabras en el título y lo guarda en una nueva columna 'WordsTitle'"""
+    # Divide el título en palabras y cuenta el número de palabras
+    df['WordsTitle'] = df['Title'].str.split().apply(len)
+    return df
