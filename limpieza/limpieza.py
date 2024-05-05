@@ -155,7 +155,8 @@ def corregirPriceFormat(df):
     """Comprueba si PriceFormat coincide con Type o si es un formato admitido,
     de lo contrario, la sustituye por el valor de Type y pone Price a nulo """
     # 1- Transformar todos los nombres de la columna PriceFormat a minúsculas
-    df['PriceFormat'] = df['PriceFormat'].str.lower()
+    df.loc[:, 'PriceFormat'] = df['PriceFormat'].str.lower()
+
     
     # 2- Contrastar esa columna con la columna Type
     for index, row in df.iterrows():
