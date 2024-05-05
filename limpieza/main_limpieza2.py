@@ -1,6 +1,6 @@
 import pandas as pd
 
-import limpieza.limpieza as limpieza
+import limpieza
 import limpieza_autores
 
 def main():
