@@ -104,11 +104,11 @@ Contiene los módulos relacionados con la limpieza de los datos, su integración
 
 <code>**Carpeta _exploracion_**</code>
 
-Una vez completadas las dos etapas anteriores, se puede proceder a la exploración de los datos. Contiene dos notebooks:
+Una vez completadas las dos etapas anteriores, se puede proceder a la exploración de los datos. Contiene:
 
 - <code>exploracion.ipynb</code> - Exploración de los datos relacionados con los libros.
 - <code>exploracion_autores.ipynb</code> - Exploración de los datos relacionados con los autores.
-- `exploracion_variables_relevantes.ipynb` - Análisis descriptivo de la variable respuesta y las variables más relevantes para el modelo elegido.
+- `exploracion_variables_relevantes.ipynb` - Análisis descriptivo de la variable respuesta y las variables más relevantes para el modelo elegido, comparando los datos de entrenamiento y los de nueva captura.
 
 <code>**Carpeta _drive_**</code>
 
