@@ -108,6 +108,7 @@ Una vez completadas las dos etapas anteriores, se puede proceder a la exploraci�
 
 - <code>exploracion.ipynb</code> - Exploración de los datos relacionados con los libros.
 - <code>exploracion_autores.ipynb</code> - Exploración de los datos relacionados con los autores.
+- `exploracion_variables_relevantes.ipynb` - Análisis descriptivo de la variable respuesta y las variables más relevantes para el modelo elegido.
 
 <code>**Carpeta _drive_**</code>
 
