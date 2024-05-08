@@ -91,6 +91,7 @@ Corresponde a la adquisición de los datos de las distintas fuentes.
 - <code>googleTrends.py</code> - Recopila el interés a lo largo del tiempo en un timeframe especificado para un libro dado.
 - <code>main_adquisicion_1.py</code> - Hace uso de los módulos *librosNYT* y *librosPopulares*.
 - <code>main_adquisicion_2.py</code> - Utiliza los módulos *goodreads*, *barnesAndNoble*, *googleTrends*, *autoresGoodreads* y *autoresWiki*.
+- `main_nuevaCaptura_1.py` - Hace uso de los módulos *librosNYT* y *librosPopulares* para recoger libros en fechas más recientes.
 
 <code>**Carpeta _limpieza_**</code>
 
@@ -121,3 +122,6 @@ Cuenta con archivos relacionados con la descarga de los conjuntos de datos almac
 - <code>utilidadesModelos.py</code> - Contiene funciones y métodos comunes a todos los modelos: constantes, métricas de evaluación, estrategia de validación, transformaciones, SMOTE-NC, creación del pipeline de entrenamiento, estrategias de búsqueda y la inicialización y registro de resultados en el entorno MLFlow.
 
 Cada carpeta de este directorio se corresponde con un modelo distinto y contiene dos jupyter notebooks: uno relacionado con la selección de variables (solo si es necesario) y otro que entrena los modelos y guarda los resultados en MLFlow. Los modelos entrenados son una regresión logística con regularización, un Random Forest y un perceptrón multicapa.
+
+`**Carpeta _evaluacion_**`
+- `evaluacionModeloFinal.ipynb` - Aplica el modelo seleccionado sobre el conjunto de datos nuevos y compara las métricas de rendimiento con los datos de entrenamiento y la heurística.
