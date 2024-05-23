@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from pytrends.request import TrendReq
 import time
 import pytrends
+import numpy as np
 
 CATEGORIA_TODAS = 0
 CATEGORIA_LIBROS = 22
@@ -17,6 +18,7 @@ def getInterestOverTime(keywords, categoria, tf):
         return data
     except Exception as e:
         print(e)
+
     return pd.DataFrame()
 
 def getAdvancedKeyword(kw):
@@ -29,59 +31,50 @@ def getAdvancedKeyword(kw):
     return kw
 
 
-def getTrends(df):
-    """Dado un dataframe de bestsellers, obtiene el interés para cada libro en el periodo
-    de un mes"""
+def getTrends(df, maxCount = 5000):
+    """Dado un dataframe de bestsellers, obtiene el interés para cada libro y autor si BookInterest1M es 0"""
     
-    interestBooks = []
 
-    # hl -> hosting language
-    # tz -> timezone (360 = USA)
-    pytrends = TrendReq(hl='en-US', tz=360)
+    while True:
+        countTotal = 0
+        countBuenos = 0
+        countMalos = 0
+        for i, row in df.iterrows():
 
-    # Nos aseguramos de que la columna Date sea una fecha
-    df['Date'] = pd.to_datetime(df['Date'])
+            if row['BookInterest1M'] == 0:
+                book = row['Title']
+                keywordsBook = [book]
+                date = row['Date']
+                minusMonth = date - timedelta(days=30)
+                tfM = minusMonth.strftime("%Y-%m-%d") + " " + date.strftime("%Y-%m-%d")
 
-    count429 = 0
-    totalCount = 0
-    # Recorremos todos los bestsellers
-    for i, row in df.iterrows():
-
-        book = row.Title
-
-        # Creamos las listas de palabras clave
-        keywordsBook = [book]
-
-        # Generamos los timeframes
-        date = row.Date
-        minusMonth = date - timedelta(days=30)
-        tfM = minusMonth.strftime("%Y-%m-%d") + " " + date.strftime("%Y-%m-%d")
-
-        # Hacemos la request para el título
-        data = getInterestOverTime(keywordsBook, CATEGORIA_LIBROS, tfM)
-        try:
-
-            # Si tiene éxito se suman las puntuaciones y se añade a la lista
-            suma = sum(data[book])
-            interestBooks.append(suma)
-            
-        except Exception as e:
-
-            # Si hay un error se añade un 0 a la lista
-            interestBooks.append(0)
-            count429 += 1
+                data = getInterestOverTime(keywordsBook, CATEGORIA_LIBROS, tfM)
+                try:
+                    suma = sum(data[book])
+                    print("Suma = ", suma)
+                    df.at[i, 'BookInterest1M'] = suma
+                    countBuenos += 1
+                    countMalos = 0
         
-        # Pausa tras varios errores 429 para suavizar los bloqueos
-        if count429 == 10:
-            count429 = 0
-            time.sleep(60)
+                except KeyError as e:
+                    df.at[i, 'BookInterest1M'] = np.nan
+                    countMalos += 1
 
-        print(totalCount)
-        totalCount += 1
-        time.sleep(1)
+                if countMalos == 10:
+                    countMalos = 0
+                    df.to_csv("trends.csv")
+                    time.sleep(90)
 
-    # Creamos la columna con los datos obtenidos
-    df["BookInterest1M"] = interestBooks
+                time.sleep(1)
+                if countBuenos == 10:
+                    countBuenos = 0
+                    df.to_csv("trends.csv")
+                    time.sleep(65)
+                    
+                if countTotal == 300:
+                    countTotal = 0
+                    time.sleep(240)
 
-    return df
+                if countTotal == maxCount:
+                    return df
 
