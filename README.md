@@ -1,5 +1,6 @@
-# NOVELLA
-<code> PD1 </code>
+# PROYECTO NOVELLA
+<code> Proyecto de Datos 1 </code>
+***
 
 ### 1. Descripción del proyecto
 
@@ -123,5 +124,103 @@ Cuenta con archivos relacionados con la descarga de los conjuntos de datos almac
 
 Cada carpeta de este directorio se corresponde con un modelo distinto y contiene dos jupyter notebooks: uno relacionado con la selección de variables (solo si es necesario) y otro que entrena los modelos y guarda los resultados en MLFlow. Los modelos entrenados son una regresión logística con regularización, un Random Forest y un perceptrón multicapa.
 
-`**Carpeta _evaluacion_**`
+<code>**Carpeta _evaluacion_**</code>
 - `evaluacionModeloFinal.ipynb` - Aplica el modelo seleccionado sobre el conjunto de datos nuevos y compara las métricas de rendimiento con los datos de entrenamiento y la heurística.
+
+### 6. Resultados y evaluación
+
+Tras realizar el ajuste de hiperparámetros de tres modelos distintos con distintas estrategias de exploración, decidimos que el modelo que continuase a la fase de producción fuese el **perceptrón multicapa (MLP)** con los siguientes hiperparámetros:
+
+- *activation* — 'logistic'
+- *alpha* — 0.8773407884629941
+- *early_stopping* — True
+- *hidden_layer_sizes* — (150, 150)
+- *learning_rate* — 'adaptive'
+- *learning_rate_init* — 0.0023019050769459534
+- *random_state* — 22
+
+Para la evaluación de este modelo, decidimos compararlo frente a la heurística que definimos como «serán bestsellers aquellos libros cuyos autores hayan tenido al menos uno bestseller previo». Los resultados de la evaluación con la totalidad del conjunto de datos de entrenamiento y el conjunto de datos nuevos es el siguiente:
+
+<table>
+  <tr>
+    <th>Modelo</th>
+    <th>Datos</th>
+    <th>Balanced Accuracy</th>
+    <th>Sensibilidad</th>
+    <th>Especificidad</th>
+  </tr>
+  <tr>
+    <td rowspan="2">MLP</td>
+    <td>Prueba (train)</td>
+    <td>0.78</td>
+    <td>0.73</td>
+    <td>0.83</td>
+  </tr>
+  <tr>
+    <td>Nuevos</td>
+    <td>0.72</td>
+    <td>0.52</td>
+    <td>0.92</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Heurística</td>
+    <td>Prueba (train)</td>
+    <td>0.63</td>
+    <td>0.29</td>
+    <td>0.97</td>
+  </tr>
+  <tr>
+    <td>Nuevos</td>
+    <td>0.73</td>
+    <td>0.50</td>
+    <td>0.97</td>
+  </tr>
+</table>
+
+Se puede observar que se observa una degradación de las métricas con el MLP en los datos nuevos mientras hay una mejora en las predicciones de la heurística. Esto se puede atribuir a varios factores, como cierto ruido añadido en la captura de los datos de GoogleTrends o los cambios en las distribución de los bestsellers previos que reflejó la prueba de Mann–Whitney U cuando realizamos el análisis de la deriva.
+
+No obstante, descubrimos que en aquellos libros cuyos autores no habían tenido bestsellers previos nuestro modelo tenía cierto poder de predicción del cual la heurísica carecía completamente. Esto se puede observar en la siguiente tabla:
+
+<table>
+  <tr>
+    <th>Modelo</th>
+    <th>Datos</th>
+    <th>Balanced Accuracy</th>
+    <th>Sensibilidad</th>
+    <th>Especificidad</th>
+  </tr>
+  <tr>
+    <td rowspan="2">MLP</td>
+    <td>Prueba (train) NB</td>
+    <td>0.75</td>
+    <td>0.65</td>
+    <td>0.84</td>
+  </tr>
+  <tr>
+    <td>Nuevos NB</td>
+    <td>0.58</td>
+    <td>0.22</td>
+    <td>0.93</td>
+  </tr>
+  <tr>
+    <td rowspan="2">Heurística</td>
+    <td>Prueba (train) NB</td>
+    <td>0.50</td>
+    <td>0</td>
+    <td>1</td>
+  </tr>
+  <tr>
+    <td>Nuevos NB</td>
+    <td>0.50</td>
+    <td>0</td>
+    <td>1</td>
+  </tr>
+</table>
+
+### 7. Trabajo futuro
+
+En base a los resultados, se abre un nuevo enfoque para nuestro proyecto: construir un modelo especializado en aquellos libros cuyos autores no han tenido bestsellers previos. Esto es debido a  que es el sector donde las heurísticas convencionales no funcionan pero que sin embargo su predicción de potencial bestseller podría ofrecerle una gran ventaja a la empresa con respecto a la competencia.
+
+### 8. Agradecimientos
+
+Queremos agradecer a Javier Arroyo por su supervisión de este proyecto. Sus detallados feedbacks y orientación constante han sido fundamentales para el desarrollo del mismo.
