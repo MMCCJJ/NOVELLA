@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import re
 import Levenshtein
+import ast
 
 # Columnas innecesarias que se eliminarán
 COLUMNAS_INNECESARIAS = ["Main Category", "url", "Subcategory", "Publisher"]
@@ -503,3 +504,34 @@ def wordsTitle(df):
     # Divide el título en palabras y cuenta el número de palabras
     df['WordsTitle'] = df['Title'].str.split().apply(len)
     return df
+
+def getNewGenres(train_df, test_df):
+    """Calcula la diferencia entre los conjuntos de géneros literarios de test menos train"""
+    
+    generos_train = set()
+    generos_test = set()
+
+    # Recorremos las filas de los libros de train
+    for _, fila in train_df.iterrows():
+        
+        # Obtenemos la lista de géneros
+        string_lista = fila["GenresList"]
+        # Convertimos el string a una lista
+        lista_generos = ast.literal_eval(string_lista)
+        # Actualizamos el conjunto
+        generos_train.update(lista_generos)
+
+    for _, fila in test_df.iterrows():
+
+        string_lista = fila["GenresList"]
+        lista_generos = ast.literal_eval(string_lista)
+        generos_test.update(lista_generos)
+
+    # Calculamos la diferencia de géneros (test - train)
+    diferencia_generos = generos_test - generos_train
+    
+    # Mostramos el número de géneros y los géneros en sí
+    print("Número de géneros únicos nuevos:", len(diferencia_generos))
+    print("\n--- Géneros únicos nuevos ---\n")
+    for genero in diferencia_generos:
+        print(genero)
