@@ -535,3 +535,55 @@ def getNewGenres(train_df, test_df):
     print("\n--- Géneros únicos nuevos ---\n")
     for genero in diferencia_generos:
         print(genero)
+
+def imputarTrends(dfTrain, dfTest, vecinos = 3):
+    """Imputa el interés a lo largo del tiempo en la columna BookInterest1M de los valores nulos del df
+    de test en función de los datos de entrenamiento"""
+    
+    # Convertimos PriceFormat en variables dummy
+    dfTrain = pd.get_dummies(dfTrain, columns=['PriceFormat'])
+    dfTest = pd.get_dummies(dfTest, columns=['PriceFormat'])
+ 
+    dfTest_nulos = dfTest[dfTest['BookInterest1M'] == 0]
+    
+    # Filtramos no nulos en la columna 'Price'
+    dfTest_no_nulos = dfTest[dfTest['BookInterest1M'] > 0]
+    
+    # Seleccionamos las características relevantes para el algoritmo KNN
+    X = dfTrain[['Rating20Days', 'Price', 'WordsTitle', 'HasTwitter', 'HasWikipedia', 'PrevBestSellAuthor', 'PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook']]
+    y = dfTrain['BookInterest1M']
+    
+    # Inicializamos el modelo KNN
+    knn = NearestNeighbors(n_neighbors=vecinos)
+    knn.fit(X, y)
+    
+    # Iteramos sobre los nulos para imputar
+    for index, row in dfTest_nulos.iterrows():
+        
+        # Filtramos libros similares
+        libroSimilarIndices = knn.kneighbors(
+            [[
+              row['Rating20Days'], 
+              row['Price'], 
+              row['WordsTitle'],
+              row['HasTwitter'],
+              row['HasWikipedia'],
+              row['PrevBestSellAuthor'],
+              row['PriceFormat_hardcover'], 
+              row['PriceFormat_paperback'], 
+              row['PriceFormat_ebook']]]
+        )[1][0]
+        
+        librosSimilares = dfTrain.iloc[libroSimilarIndices]
+        
+        # Calculamos la media de los precios de los libros similares
+        precioImputado = round(librosSimilares['BookInterest1M'].mean(), 0)
+       
+        # Imputamos el precio
+        dfTest.at[index, 'BookInterest1M'] = precioImputado
+    
+    # Eliminamos el one-hot encoding
+    dfTest['PriceFormat'] = dfTest[['PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook']].idxmax(axis=1).str.replace('PriceFormat_', '')
+    dfTest = dfTest.drop(['PriceFormat_hardcover', 'PriceFormat_paperback', 'PriceFormat_ebook'], axis=1)
+    
+    return dfTest
